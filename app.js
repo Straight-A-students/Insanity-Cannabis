@@ -128,6 +128,10 @@ class App {
           type: MaterialManager.BRICKSTYLE, 
           label: '21',
           length: 9,
+        }, {
+          type: MaterialManager.OTHER, 
+          label: 'nope',
+          length: 1,
         },
       ])
     this.displayer = new Displayer(document.getElementById('render'));
@@ -135,12 +139,15 @@ class App {
     this.brickCount = 4;
     this.materialName = '08-octangle-full';
     this.backgroundMaterialName = 'bg-sky';
+    this.unlockedBricks = new Set([ '08-octangle-full' ])
     this.game = null;
     this.volume = 1;
     this.bgm = null; // TODO
     this.loadData();
-    let facePattern = { top: 0, bottom: 1, front: 2, back: 3, right: 4, left: 5 }
-    this.brickStyles = this.materialManager.brickStyles.map(n => new SelectorBrick(this, facePattern, n))
+    this.brickStyles = this.materialManager.brickStyles.map(n => 
+      new SelectorBrick(this, n))
+    this.brickStyles.forEach(b => 
+      this.unlockedBricks.has(b.label) && b.enable())
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
     this.changeBackground()
   }
@@ -155,9 +162,9 @@ class App {
     this.displayer4BrickStyle.applyContainer(appElem)
     this.displayer4BrickStyle.resize()
     Object.assign(this.displayer4BrickStyle.cameraInfo, {
-      r: 8, 
+      r: 10, 
       theta: this.displayer4BrickStyle.selectorBrickStartY, 
-      phi: .5,
+      phi: -.5, 
     })
     this.displayer4BrickStyle.calcCamera()
   }
