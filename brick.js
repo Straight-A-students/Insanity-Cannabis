@@ -42,7 +42,6 @@ class Brick {
     this.mouseStartY = 0
     this.mouseLastX = 0
     this.mouseLastY = 0
-    this.mouseDown = false
     this.disableMouse = false;
   }
 
@@ -156,6 +155,10 @@ class Brick {
    * @param {number} faceZ
    */
   mouseDownEvent(x, y, faceX, faceY, faceZ) {
+    if (this.disableMouse || this.app.displayer.processingAnimate) {
+      return
+    }
+
     this.mouseStartX = x
     this.mouseStartY = y
     this.mouseLastX = x
@@ -166,7 +169,6 @@ class Brick {
     this.face = new THREE.Vector3(faceX, faceY, faceZ)
     this.faceNormalVector = new THREE.Vector3(faceX, faceY, faceZ).applyQuaternion(this.renderObject.quaternion).round()
     this.startQuaternion = this.renderObject.quaternion.clone()
-    this.mouseDown = true
     this.lockOnX = false
     this.lockOnY = false
     this.axisX = new THREE.Vector3(0, 1, 0)
@@ -179,11 +181,7 @@ class Brick {
    * @param {number} y
    */
   mouseMoveEvent(x, y) {
-    if (!this.mouseDown) {
-      return
-    }
-
-    if (this.disableMouse) {
+    if (this.disableMouse || this.app.displayer.processingAnimate) {
       return
     }
 
@@ -218,11 +216,10 @@ class Brick {
    *
    */
   mouseUpEvent() {
-    if (this.disableMouse) {
+    if (this.disableMouse || this.app.displayer.processingAnimate) {
       return
     }
 
-    this.mouseDown = false
     this.lockOnX = false
     this.lockOnY = false
     this.disableMouse = true

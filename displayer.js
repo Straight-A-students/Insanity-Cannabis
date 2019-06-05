@@ -49,6 +49,7 @@ class Displayer {
     this.selectorBrickStartY = 0
     this.appWidth = 0
     this.appHeight = 0
+    this.processingAnimate = false
     this.appElem = appElem
     this.domElement = this.renderer.domElement
     appElem && this.appElem.appendChild(this.domElement)
@@ -165,6 +166,55 @@ class Displayer {
 
       startY -= 3
     }
+  }
+
+  submitAnimate (resolved, callback) {
+    let dy = []
+      , t = 32
+      , { gameBricks: bricks } = this
+      , startY = bricks.length / 2 * 2 - 1.5
+      , rotateY = 2 * Math.PI / t
+      , st
+    for (let { renderObject: { position: { y } } } of bricks) {
+      dy.push((startY - y) / t)
+      startY -= 2
+    }
+
+    this.processingAnimate = true
+    st = setInterval(() => {
+      if (t --== 0) {
+        clearInterval(st)
+        this.gameGroup.rotation.y = 0
+        this.processingAnimate = false
+        if (resolved) 
+          callback()
+        else
+          this.submitFaultAnimate(callback)
+        return
+      }
+
+      this.gameGroup.rotation.y += rotateY
+      bricks.forEach(({ renderObject: { position } }, i) => 
+        position.y += dy[i])
+    }, 30)
+  }
+
+  submitFaultAnimate(callback) {
+    let t = 32
+      , st
+    this.processingAnimate = true
+    st = setInterval(() => {
+      if (t --== 0) {
+        clearInterval(st)
+        Object.assign(this.gameGroup.position, { x: 0, z: 0 })
+        this.processingAnimate = false
+        this.setGameBricks(this.gameBricks)
+        callback()
+        return
+      }
+
+      Object.assign(this.gameGroup.position, { x: Math.random() * .8, z: Math.random() * .8 })
+    }, 30)
   }
 
   /**

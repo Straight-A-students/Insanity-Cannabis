@@ -512,6 +512,10 @@ class App {
    * 暫停遊戲
    */
   pause() {
+    if (this.displayer.processingAnimate) {
+      return
+    }
+
     this.game.pause();
     document.getElementById('pauseBackgroundPage').style.display = 'block';
   }
@@ -521,12 +525,25 @@ class App {
    * @todo 應該要顯示結算畫面，尚未完成，暫時直接開始新遊戲
    */
   submit() {
+    if (this.displayer.processingAnimate) {
+      return
+    }
+
+    this.game.pause()
+    this.displayer.submitAnimate(this.game.isResolve(), () => 
+      this.afterSubmitAnim())
+  }
+
+  afterSubmitAnim() {
     if (this.game.isResolve()) {
       clearInterval(this.timeInt);
       alert('Mission clear! Starting a new game.');
+      this.displayer.mouseInfo.mouseDown = false // will be removed
       this.start(); // Temporary
     } else {
+      this.game.start()
       alert('Not yet');
+      this.displayer.mouseInfo.mouseDown = false // will be removed
     }
   }
 
