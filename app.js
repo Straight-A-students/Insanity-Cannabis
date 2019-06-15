@@ -597,6 +597,29 @@ class App {
     // document.getElementById("hide-area").appendChild(hide_locked_div);
   }
 
+  /**
+   * 插入成就
+   * @param {string} context 
+   * @param {number} type 
+   * @param {flag} locked 
+   */
+  insertAchievementElement(context, type, locked) {
+    var new_achievement_element = document.createElement("div");
+    new_achievement_element.innerText = context;
+
+    if (locked) {
+      new_achievement_element.classList.add("locked");
+    }else{
+      new_achievement_element.classList.add("unlocked");
+    }
+
+    switch(type) {
+      case 0: document.getElementById("normal-area").appendChild(new_achievement_element);break;
+      case 1: document.getElementById("special-area").appendChild(new_achievement_element);break;
+      case 2: document.getElementById("hide-area").appendChild(new_achievement_element);break;
+    }
+  }
+
 
   // Game page: playing
 
