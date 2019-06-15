@@ -63,6 +63,7 @@ class MaterialManager {
 
     this.list[label] = {
       type: MaterialManager.BACKGROUND,
+      sameWall,
       textures: 
         new THREE.CubeTextureLoader()
           .load(BACKGROUNDFACEKEYS.map(i =>

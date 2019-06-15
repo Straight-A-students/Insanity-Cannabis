@@ -144,8 +144,6 @@ class App {
     this.volume = 75;
     this.bgm_player = bgm_player;
     this.inGame = false;
-    let facePattern = { top: 0, bottom: 1, front: 2, back: 3, right: 4, left: 5 }
-    this.brickStyles = this.materialManager.brickStyles.map(n => new SelectorBrick(this, facePattern, n))
     this.brickStyles = this.materialManager.brickStyles.map(n => 
       new SelectorBrick(this, n))
     this.brickStyles.forEach(b => 
@@ -498,6 +496,7 @@ class App {
     var BrickCount_div = document.createElement("div");
     var decreaseBrickCount_div = document.createElement("button");
     var brickStyleTXT_div = document.createElement("div");
+    var backgroundStyleTXT_div = document.createElement("div");
     var brickShow_div = document.createElement("div");
     var gohome_btn = document.createElement("button");
 
@@ -513,11 +512,13 @@ class App {
     BrickCount_div.id = "BrickCount";
     decreaseBrickCount_div.id = "decreaseBrickCount";
     brickStyleTXT_div.id = "brickStyleTXT";
+    backgroundStyleTXT_div.id = "backgroundStyleTXT";
     brickShow_div.id = "brickShow";
     gohome_btn.id = "gohome";
 
     brickNumTXT_div.innerText = "方塊數：";
     brickStyleTXT_div.innerText = "方塊樣式：";
+    backgroundStyleTXT_div.innerText = "背景樣式：";
     // increaseBrickCount_div.innerHTML = "+";
     // decreaseBrickCount_div.innerHTML = "-";
     BrickCount_div.innerText = this.brickCount.toString();
@@ -526,9 +527,10 @@ class App {
     brickNumSetting_div.appendChild(decreaseBrickCount_div);
     brickNumSetting_div.appendChild(BrickCount_div);
     brickNumSetting_div.appendChild(increaseBrickCount_div);
+    brickStyleSetting_div.appendChild(backgroundStyleTXT_div);
+    brickStyleSetting_div.appendChild(document.createElement('div')).innerHTML = `<div style="font-size: 16px">` + this.materialManager.backgrounds.map(l => `<img width="64" onclick="app.changeBackground('${l}')" onmouseover="app.changeBackground('${l}')" src="img/${l}-${this.materialManager.list[l].sameWall ? 'wall' : 'back'}.png" />`).join('') + `</div>`
     brickStyleSetting_div.appendChild(brickStyleTXT_div);
     brickStyleSetting_div.appendChild(brickShow_div);
-    // setting_div.appendChild(document.createElement('div')).innerHTML = `<div style="font-size: 16px">Backgrounds: ` + this.materialManager.backgrounds.map(l => `<a onclick="app.changeBackground('${l}')" href="javascript:">[${l}]</a>`).join(':') + `</div>`
     setting_div.appendChild(brickNumSetting_div);
     setting_div.appendChild(brickStyleSetting_div);
 
