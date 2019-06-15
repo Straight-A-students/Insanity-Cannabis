@@ -16,7 +16,7 @@ const width = args.width;
 const height = args.height;
 const headless = args.headless
 const outdir = __dirname + '/output/brick_count/';
-const printer = new Printer(outdir);
+const printer = new Printer(outdir, headless);
 
 (async () => {
 
