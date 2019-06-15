@@ -12,12 +12,34 @@
 <body>
 	<div id="render"></div>
 	<div id="game"></div>
+
+	<!-- https://developers.google.com/youtube/iframe_api_reference -->
+	<div id="bgm_player"></div>
+	<script src="https://www.youtube.com/iframe_api"></script>
 	<script>
-		window.onload = function() {
-			window.app = new App();
+		var player;
+		function onYouTubeIframeAPIReady() {
+			player = new YT.Player('bgm_player', {
+				events: {
+					onReady: onPlayerReady,
+				},
+				height: '1',
+				width: '1',
+				playerVars: { 'loop': 1, 'autoplay': 1, 'controls': 0, 'playlist': 'arq7-XXEM5o' },
+				videoId: 'arq7-XXEM5o'
+			});
+		}
+		function onPlayerReady(event) {
+			window.app = new App(player);
 			app.gotoHome();
+			event.target.setVolume(app.volume);
+			event.target.playVideo();
+		}
+		window.onfocus = function() {
+			window.app.bgm_player.playVideo();
 		}
 	</script>
+
 	<div id="loading">
 		<div id="loadingContent">
 			Loading...<span id="loadingCnt">(0/0)</span>
