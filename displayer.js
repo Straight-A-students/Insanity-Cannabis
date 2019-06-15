@@ -132,9 +132,15 @@ class Displayer {
       , startY = bricks.length / 2 * 3 - 1.5
     this.gameBricks = gameBricks
     gameGroup.children.length = 0
-    for (let { renderObject } of bricks) {
+    for (let { renderObject, arrowX, arrowY, arrowZ } of bricks) {
       gameGroup.add(renderObject)
+      gameGroup.add(arrowX)
+      gameGroup.add(arrowY)
+      gameGroup.add(arrowZ)
       renderObject.position.y = startY
+      arrowX.position.y = startY
+      arrowY.position.y = startY
+      arrowZ.position.y = startY
       startY -= 3
     }
 
