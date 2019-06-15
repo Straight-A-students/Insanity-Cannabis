@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const Printer = require('./util.js').Printer;
@@ -42,7 +43,7 @@ const printer = new Printer(outdir, headless);
 	const waitRotate = 10;
 	const waitStep = 10;
 
-	while (true) {
+	while (true) { // eslint-disable-line no-constant-condition
 		console.log('Game start');
 
 		let answer = await page.evaluate(() => app.game.getAnswer());
