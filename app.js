@@ -689,7 +689,7 @@ class App {
     this.timemoveblock_div.style.display = 'block';
     this.submit_btn.style.display = 'block';
     this.timeInt = setInterval(() => {
-      this.time_num.innerText = Math.floor(this.game.getTime());
+      this.time_num.innerText = this.game.getTimeFormatted();
     }, 100);
   }
 
