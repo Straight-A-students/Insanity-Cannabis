@@ -349,7 +349,7 @@ class App {
     resultPage_move_num.innerText = "0";
     resultPage_restart_btn.innerText = "再玩一次";
     resultPage_next_btn.innerText = "開新一局";
-    resultPage_home_btn.innerText = "回到首頁
+    resultPage_home_btn.innerText = "回到首頁";
 
     volume_ipt.type = "range";
     volume_ipt.min = "0";
