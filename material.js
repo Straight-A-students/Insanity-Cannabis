@@ -17,6 +17,7 @@ function loadEnd () {
 class MaterialManager {
   constructor (arr) {
     this.list = {}
+    this.listOfLabel = []
     if (arr) 
       arr.forEach(d => {
         switch (d.type) {
@@ -25,6 +26,9 @@ class MaterialManager {
             break
           case MaterialManager.BRICKSTYLE:
             this.addBrickStyle(d)
+            break
+          case MaterialManager.OTHER:
+            this.addOther(d)
             break
         }
       })
@@ -37,7 +41,7 @@ class MaterialManager {
 
   getList (type) {
     let list = []
-    for (let [ k, v ] of Object.entries(this.list)) 
+    for (let [ k, v ] of this.listOfLabel.map(k => [ k, this.list[k] ])) 
       if (v.type == type) 
         list.push(k)
     return list
@@ -54,8 +58,12 @@ class MaterialManager {
   addBackground ({ label, sameWall = false } = {}) {
     loading.hidden = false
     itemsToLoad ++
+    if (! this.list[label]) 
+      this.listOfLabel.push(label)
+
     this.list[label] = {
       type: MaterialManager.BACKGROUND,
+      sameWall,
       textures: 
         new THREE.CubeTextureLoader()
           .load(BACKGROUNDFACEKEYS.map(i =>
@@ -68,6 +76,9 @@ class MaterialManager {
   addBrickStyle ({ label, length } = {}) {
     loading.hidden = false
     itemsToLoad += length
+    if (! this.list[label]) 
+      this.listOfLabel.push(label)
+    
     this.list[label] = {
       type: MaterialManager.BRICKSTYLE,
       textures: 
@@ -79,9 +90,15 @@ class MaterialManager {
               ))
     }
   }
+
+  addOther ({ label, length } = {}) {
+    this.addBrickStyle({ label, length })
+    this.list[label].type = MaterialManager.OTHER
+  }
 }
 
 MaterialManager.BACKGROUND = 0
 MaterialManager.BRICKSTYLE = 1
+MaterialManager.OTHER = 2
 
 export { MaterialManager, BRICKFACEKEYS, BACKGROUNDFACEKEYS }
