@@ -164,6 +164,7 @@ class Game {
    * 重新開始
    */
   restart() {
+    this.app.displayer.setGameBricks(this.bricks);
     for (let bid = 0; bid < this.app.brickCount; bid++) {
       this.bricks[bid].facePattern = { ...this.bricks[bid].facePatternOriginal };
       this.bricks[bid].renderObject.quaternion.copy(this.bricks[bid].quaternionOriginal);
