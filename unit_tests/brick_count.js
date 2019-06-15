@@ -6,8 +6,8 @@ var ArgumentParser = require('argparse').ArgumentParser;
 
 var parser = new ArgumentParser({ addHelp: true, headless: false });
 
-parser.addArgument('--width', { defaultValue: 1200, type: 'int' });
-parser.addArgument('--height', { defaultValue: 900, type: 'int' });
+parser.addArgument('--width', { defaultValue: 1280, type: 'int' });
+parser.addArgument('--height', { defaultValue: 720, type: 'int' });
 parser.addArgument('--withhead', { dest: 'headless', action: 'storeFalse' });
 var args = parser.parseArgs();
 console.log(args);
