@@ -56,9 +56,12 @@ class Displayer {
     this.camera.position.set(4, 4, 4)
     this.camera.lookAt(0, 0, 0)
     this.pointLight.position.setFromMatrixPosition(this.camera.matrix)
+    this.bug = new THREE.Mesh(new THREE.BoxGeometry(.2, .2, .2), new THREE.MeshBasicMaterial({ color: 0xffff00 }))
+    this.bugdp = new THREE.Vector3(1, 1, 1)
     this.scene.add(this.pointLight)
     this.scene.add(this.gameGroup)
     this.scene.add(this.selectorGroup)
+    this.scene.add(this.bug)
     this.calcCamera()
     appElem && this.resize()
     window.addEventListener('resize', () => this.resize())
@@ -69,8 +72,29 @@ class Displayer {
     window.addEventListener('touchmove', e => this.mouseMoveEvent(e))
     window.addEventListener('touchend', e => this.mouseUpEvent(e))
     window.addEventListener('wheel', e => this.wheelEvent(e))
+    this.eventList = [
+      () => this.renderer.render(this.scene, this.camera),
+      () => this.bugegg(),
+    ]
+    let exe = e => e()
     setInterval(() =>
-      this.renderer.render(this.scene, this.camera), 33)
+      this.eventList.forEach(exe), 33)
+  }
+
+  bugegg () {
+    let xp = this.bug.position
+      , dp = this.bugdp
+      , ddp = new THREE.Vector3(Math.random() - .5, Math.random() - .5, Math.random() - .5).cross(dp)
+    ddp.normalize()
+    dp.addScaledVector(ddp, .2)
+    dp.normalize()
+    xp.add(dp)
+    if (Math.hypot(xp.x, xp.y, xp.z) > 30) 
+      xp.add(dp.negate())
+  }
+
+  findBug () {
+    alert('Congratulation, ur a good bug finder !!1')
   }
 
   /**
@@ -245,6 +269,7 @@ class Displayer {
     let [ brick, normal ] = this.calcMouseRay(e)
     mouseInfo.interObject = brick
     if (brick) {
+      console.log(brick)
       let { x, y, z } = normal
       brick.mouseDownEvent(e.clientX, e.clientY, x, y, z)
     }
@@ -339,13 +364,21 @@ class Displayer {
 
     bricks.forEach(b =>
       id2obj[b.renderObject.uuid] = b)
-    intersects = rayCaster.intersectObjects(bricks.map(b =>
-      b.renderObject))
+    id2obj[this.bug.uuid] = this.bug
+    let list = bricks.map(b =>
+      b.renderObject)
+    list.push(this.bug)
+    intersects = rayCaster.intersectObjects(list)
     if (intersects.length == 0)
       return []
 
     brick = id2obj[intersects[0].object.uuid]
     faceNorm = intersects[0].face.normal
+
+    if (brick == this.bug) {
+      this.findBug()
+      return []
+    }
 
     // highlight intersected face?
     // for (let m of brick.renderObject.material)
