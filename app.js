@@ -177,7 +177,7 @@ class App {
 
   unlockBrick(label) {
     this.unlockedBricks.add(label)
-    app.displayer4BrickStyle.selectorBricks.find(b => 
+    this.displayer4BrickStyle.selectorBricks.find(b => 
       b.label == label)
     .enable()
   }
