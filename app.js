@@ -206,10 +206,12 @@ class App {
     var start_btn = document.createElement("button");
     var setting_btn = document.createElement("button");
     var achievement_btn = document.createElement("button");
+    var showaboutme_btn = document.createElement("button");
 
     start_btn.onclick = () => { this.start(); };
     setting_btn.onclick = () => { this.gotoSetting(); };
     achievement_btn.onclick = () => { this.gotoAchievement(); };
+    showaboutme_btn.onclick = () => { this.showAboutMe(); };
 
     home_div.id = "home";
     icon_div.id = "icon-area";
@@ -217,15 +219,18 @@ class App {
     setting_btn.id = "gotoSetting";
     achievement_btn.id = "gotoAchievement";
     achievement_btn.style = "display: none"; // Temporary
+    showaboutme_btn.id = "showaboutme";
 
     start_btn.innerText = "開始";
     setting_btn.innerText = "設定";
     achievement_btn.innerText = "成就";
+    showaboutme_btn.innerText = "關於";
 
     home_div.appendChild(icon_div);
     home_div.appendChild(start_btn);
     home_div.appendChild(setting_btn);
     home_div.appendChild(achievement_btn);
+    home_div.appendChild(showaboutme_btn);
 
     document.getElementById("game").appendChild(home_div);
   }
@@ -604,6 +609,33 @@ class App {
     // document.getElementById("hide-area").appendChild(hide_locked_div);
   }
 
+  /**
+   * 顯示關於頁面
+   */
+  showAboutMe() {
+    this.clearPage();
+    var about_me_background_div = document.createElement("div");
+    var context_div = document.createElement("div");
+    var gohome_btn = document.createElement("button");
+
+    gohome_btn.onclick = () => { this.gotoHome() };
+
+    about_me_background_div.id = "about_me_background";
+    context_div.id = "about_me_context";
+    gohome_btn.id = "gohome";
+
+    context_div.innerHTML = `團隊名稱：<a href="https://github.com/Straight-A-students/" target="_blank">Straight A Students</a><br>
+    成員：XMAX, xiplus, MAHADADA, oldA5, Orcinus<br>
+    <br>
+    背景音樂：<a href="https://youtu.be/${this.bgm_player.getVideoData().video_id}" target="_blank">${this.bgm_player.getVideoData().title}</a><br>
+    3D graph renderer powered by <a href="https://threejs.org/" target="_blank">three.js</a><br>
+    `;
+
+    about_me_background_div.appendChild(context_div);
+    about_me_background_div.appendChild(gohome_btn);
+
+    document.getElementById('game').appendChild(about_me_background_div);
+  }
 
   // Game page: playing
 

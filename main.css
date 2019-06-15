@@ -380,6 +380,21 @@ button:focus{
     /* background: rgb(255, 255, 255); */
     background: inherit;
 }
+#about_me_background{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.6);
+}
+#about_me_context{
+    font-size: 1em;
+    margin: 10% auto 0 auto;
+    width: fit-content;
+    height: auto;
+    background: rgba(255, 255, 255, 0);
+}
 
 /* Temp */
 
