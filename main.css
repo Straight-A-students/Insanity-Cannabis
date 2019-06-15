@@ -364,6 +364,7 @@ button:focus{
 #nociceTitle{
     font-size: 50px;
     font-weight: bolder;
+}
 #resultBackgroundPage{
     z-index: 99;
     position: fixed;
