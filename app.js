@@ -13,63 +13,63 @@ class App {
   /**
    * 初始化App
    */
-  constructor() {
+  constructor(bgm_player) {
     this.materialManager = new MaterialManager([{
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           label: 'bg-sky',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           label: 'bg-02',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           sameWall: true,
           label: 'bg-03',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           sameWall: true,
           label: 'bg-04',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           sameWall: true,
           label: 'bg-04-1',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           sameWall: true,
           label: 'bg-04-2',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           sameWall: true,
           label: 'bg-04-3',
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: 'dice',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '01',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '02',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '03',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '04',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '05',
           length: 7,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '06',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '07',
           length: 9,
         }, {
@@ -77,55 +77,55 @@ class App {
           label: '08-octangle-full',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '09',
           length: 7,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '10',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '11-octangle-transparet',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '12',
           length: 7,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '13',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '14',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '15',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '16',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '17',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '18',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '19',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '20',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '21',
           length: 9,
         },
@@ -136,9 +136,10 @@ class App {
     this.materialName = '08-octangle-full';
     this.backgroundMaterialName = 'bg-sky';
     this.game = null;
-    this.volume = 1;
-    this.bgm = null; // TODO
+    this.volume = 75;
+    this.bgm_player = bgm_player;
     this.inGame = false;
+    this.loadData();
     let facePattern = { top: 0, bottom: 1, front: 2, back: 3, right: 4, left: 5 }
     this.brickStyles = this.materialManager.brickStyles.map(n => new SelectorBrick(this, facePattern, n))
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
@@ -152,8 +153,8 @@ class App {
   }
 
   changeBackground(label) {
-    this.displayer.scene.background = 
-    this.displayer4BrickStyle.scene.background = 
+    this.displayer.scene.background =
+    this.displayer4BrickStyle.scene.background =
     this.materialManager.get(label || this.backgroundMaterialName)
   }
 
@@ -161,8 +162,8 @@ class App {
     this.displayer4BrickStyle.applyContainer(appElem)
     this.displayer4BrickStyle.resize()
     Object.assign(this.displayer4BrickStyle.cameraInfo, {
-      r: 8, 
-      theta: this.displayer4BrickStyle.selectorBrickStartY, 
+      r: 8,
+      theta: this.displayer4BrickStyle.selectorBrickStartY,
       phi: .5,
     })
     this.displayer4BrickStyle.calcCamera()
@@ -248,6 +249,9 @@ class App {
     var volume_icon = document.createElement("div");
     var volume_ipt = document.createElement("input");
     var output_div = document.createElement("div");
+    var bgmCredit_div = document.createElement("div");
+    var bgmCreditText = document.createTextNode("現在播放：");
+    var bgmCreditLink = document.createElement("a");
 
     pause_btn.onclick = () => { this.pause(); };
     submit_btn.onclick = () => { this.submit(); };
@@ -257,7 +261,6 @@ class App {
     exit_btn.onclick = () => { this.exit(); };
     volume_ipt.oninput = () => {
       this.setVolume(volume_ipt.value);
-      this.storeData();
     };
 
     play_div.id = "play";
@@ -278,10 +281,14 @@ class App {
     restart_btn.id = "restart";
     exit_btn.id = "exit";
     volumeSetting_div.id = "volumeSetting";
-    volumeSetting_div.style = "display: none;"; // Temporary
     volume_icon.id = "volume_icon";
     volume_ipt.id = "volume";
     output_div.id = "output";
+    bgmCredit_div.id = "bgmCredit";
+    bgmCreditLink.id = "bgmCreditLink";
+    bgmCreditLink.href = `https://youtu.be/${this.bgm_player.getVideoData().video_id}`;
+    bgmCreditLink.target = "_blank";
+    bgmCreditLink.innerText = this.bgm_player.getVideoData().title;
 
     time_lb.classList.add("lb");
     time_num.classList.add("num");
@@ -297,12 +304,12 @@ class App {
     continue_btn.innerText = "繼續遊戲";
     restart_btn.innerText = "重新遊戲";
     exit_btn.innerText = "結束遊戲";
-    output_div.innerText = "75";
+    output_div.innerText = this.volume.toString();
 
     volume_ipt.type = "range";
     volume_ipt.min = "0";
     volume_ipt.max = "100";
-    volume_ipt.value = "75";
+    volume_ipt.value = this.volume.toString();
 
     play_div.appendChild(submit_btn);
     play_div.appendChild(tip_btn);
@@ -323,6 +330,9 @@ class App {
     volumeSetting_div.appendChild(volume_icon);
     volumeSetting_div.appendChild(volume_ipt);
     volumeSetting_div.appendChild(output_div);
+    pausePage_div.appendChild(bgmCredit_div);
+    bgmCredit_div.appendChild(bgmCreditText);
+    bgmCredit_div.appendChild(bgmCreditLink);
 
     pauseBackgroundPage_div.style.display = "none";
 
@@ -583,6 +593,9 @@ class App {
    */
   setVolume(value) {
     document.getElementById("output").innerHTML = value;
+    this.volume = value;
+    this.bgm_player.setVolume(value);
+    this.storeData();
   }
 
 
