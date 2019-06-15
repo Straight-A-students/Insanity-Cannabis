@@ -22,6 +22,9 @@ class ZeroStepPassGame extends AchievementEntry {
 	}
 
 	eventListener(type, value) {
+		if (this.unlocked) { // trigger only once
+			return;
+		}
 		if (type == ACHIEVEMENTEVENT.MOVE_CHANGED) {
 			this.count++;
 		} else if (type == ACHIEVEMENTEVENT.CHECK_ANSWER) {

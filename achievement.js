@@ -48,7 +48,7 @@ class AchievementEntry {
     this.name = name;
     this.achieveTitle = achieveTitle;
     this.achieveMessage = achieveMessage;
-    this.unblocked = false;
+    this.unlocked = false;
   }
 
   eventListener(type, value) {
@@ -57,8 +57,8 @@ class AchievementEntry {
 
   achieve() {
     this.app.showAchievement(this.achieveTitle, this.achieveMessage);
-    this.unblocked = true;
-    this.app.unblockedAchievement.push(this.id);
+    this.unlocked = true;
+    this.app.unlockedAchievement.add(this.id);
   }
 }
 

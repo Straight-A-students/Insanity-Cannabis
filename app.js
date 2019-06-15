@@ -153,7 +153,7 @@ class App {
     this.volume = 75;
     this.bgm_player = bgm_player;
     this.inGame = false;
-    this.unblockedAchievement = [];
+    this.unlockedAchievement = new Set([]);
     this.brickStyles = this.materialManager.brickStyles.map(n =>
       new SelectorBrick(this, n))
     this.brickStyles.forEach(b =>
