@@ -617,9 +617,8 @@ class App {
     context_div.id = "about_me_context";
     gohome_btn.id = "gohome";
 
-    context_div.innerHTML = `團隊名稱：Straight A Students<br>
-    成員：XMAX(劉政穎), xiplus(黃宣喻),<br>
-    MAHADADA(曾靖維), oldA5(吳孟宇), Orcinus(蕭佳媛)<br>
+    context_div.innerHTML = `團隊名稱：<a href="https://github.com/Straight-A-students/" target="_blank">Straight A Students</a><br>
+    成員：XMAX, xiplus, MAHADADA, oldA5, Orcinus<br>
     <br>
     背景音樂：<a href="https://youtu.be/${this.bgm_player.getVideoData().video_id}" target="_blank">${this.bgm_player.getVideoData().title}</a><br>
     3D graph renderer powered by <a href="https://threejs.org/" target="_blank">three.js</a><br>
