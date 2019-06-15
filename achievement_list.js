@@ -18,6 +18,7 @@ class ZeroStepPassGame extends AchievementEntry {
 			'千載難逢',
 			'成就通知',
 			`千載難逢─沒有任何移動就通關`,
+			true,
 		);
 		this.move = 0;
 	}

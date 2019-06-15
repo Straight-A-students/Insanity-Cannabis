@@ -43,7 +43,7 @@ class AchievementEntry {
    * @param {string} achieveTitle - 達成成就後的通知標題
    * @param {string} achieveMessage - 達成成就後的通知訊息
    */
-  constructor(app, id, event, type, name, achieveTitle, achieveMessage) {
+  constructor(app, id, event, type, name, achieveTitle, achieveMessage, ticket) {
     this.app = app;
     this.id = id;
     this.event = event;
@@ -51,6 +51,7 @@ class AchievementEntry {
     this.name = name;
     this.achieveTitle = achieveTitle;
     this.achieveMessage = achieveMessage;
+    this.ticket = ticket;
     this.unlocked = false;
   }
 

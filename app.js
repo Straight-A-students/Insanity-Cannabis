@@ -591,7 +591,7 @@ class App {
     document.getElementById("game").appendChild(achievement_div);
 
     this.achievementManager.list.forEach(achievement => {
-      this.insertAchievementElement(achievement.name, achievement.type, achievement.unlocked);
+      this.insertAchievementElement(achievement.name, achievement.type, achievement.unlocked, achievement.ticket);
     });
   }
 
