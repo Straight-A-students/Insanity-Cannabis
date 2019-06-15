@@ -135,21 +135,7 @@ class Game {
   }
 
   getTimeFormatted() {
-    let time = this.getTime();
-    let result = '';
-    if (time > 3600) {
-      result += Math.floor(time / 3600) + ':';
-      time -= Math.floor(time / 3600) * 3600;
-    }
-    if (time > 60) {
-      result += this.timePadding(Math.floor(time / 60)) + ':';
-      time -= Math.floor(time / 60) * 60;
-    }
-    result += this.timePadding(Math.floor(time));
-    time -= Math.floor(time);
-    result += '.';
-    result += this.timePadding(Math.floor(time * 100));
-    return result;
+    return Math.floor(this.getTime());
   }
 
   getStep() {
