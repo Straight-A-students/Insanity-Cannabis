@@ -386,11 +386,11 @@ button:focus{
     right: 0;
     height: 100%;
     width: 100%;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.6);
 }
 #about_me_context{
-    font-size: 1px;
-    margin: 20% auto;
+    font-size: 12px;
+    margin: 10% auto 0 auto;
     width: 750px;
     height: auto;
     background: rgba(255, 255, 255, 0);
