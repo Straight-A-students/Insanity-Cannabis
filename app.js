@@ -595,8 +595,9 @@ class App {
    * @param {string} context
    * @param {number} type
    * @param {flag} locked
+   * @param {flag} ticket
    */
-  insertAchievementElement(context, type, locked) {
+  insertAchievementElement(context, type, locked, ticket) {
     var new_achievement_element = document.createElement("div");
     new_achievement_element.innerText = context;
 
@@ -604,6 +605,10 @@ class App {
       new_achievement_element.classList.add("locked");
     }else{
       new_achievement_element.classList.add("unlocked");
+    }
+
+    if (ticket) {
+      new_achievement_element.classList.add("ticket");
     }
 
     switch(type) {
