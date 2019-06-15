@@ -203,7 +203,7 @@ class App {
           label: '21',
           length: 9,
         }, {
-          type: MaterialManager.OTHER, 
+          type: MaterialManager.OTHER,
           label: 'nope',
           length: 1,
         },
@@ -225,9 +225,9 @@ class App {
     this.volume = 75;
     this.bgm_player = bgm_player;
     this.inGame = false;
-    this.brickStyles = this.materialManager.brickStyles.map(n => 
+    this.brickStyles = this.materialManager.brickStyles.map(n =>
       new SelectorBrick(this, n))
-    this.brickStyles.forEach(b => 
+    this.brickStyles.forEach(b =>
       this.unlockedBricks.has(b.label) && b.enable())
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
     this.changeBackground()
@@ -251,11 +251,18 @@ class App {
     this.displayer4BrickStyle.applyContainer(appElem)
     this.displayer4BrickStyle.resize()
     Object.assign(this.displayer4BrickStyle.cameraInfo, {
-      r: 10, 
-      theta: this.displayer4BrickStyle.selectorBrickStartY, 
-      phi: -.5, 
+      r: 10,
+      theta: this.displayer4BrickStyle.selectorBrickStartY,
+      phi: -.5,
     })
     this.displayer4BrickStyle.calcCamera()
+  }
+
+  unlockBrick(label) {
+    this.unlockedBricks.add(label)
+    this.displayer4BrickStyle.selectorBricks.find(b =>
+      b.label == label)
+    .enable()
   }
 
   // Home page
@@ -282,10 +289,12 @@ class App {
     var start_btn = document.createElement("button");
     var setting_btn = document.createElement("button");
     var achievement_btn = document.createElement("button");
+    var showaboutme_btn = document.createElement("button");
 
     start_btn.onclick = () => { this.start(); };
     setting_btn.onclick = () => { this.gotoSetting(); };
     achievement_btn.onclick = () => { this.gotoAchievement(); };
+    showaboutme_btn.onclick = () => { this.showAboutMe(); };
 
     home_div.id = "home";
     icon_div.id = "icon-area";
@@ -293,15 +302,18 @@ class App {
     setting_btn.id = "gotoSetting";
     achievement_btn.id = "gotoAchievement";
     achievement_btn.style = "display: none"; // Temporary
+    showaboutme_btn.id = "showaboutme";
 
     start_btn.innerText = "開始";
     setting_btn.innerText = "設定";
     achievement_btn.innerText = "成就";
+    showaboutme_btn.innerText = "關於";
 
     home_div.appendChild(icon_div);
     home_div.appendChild(start_btn);
     home_div.appendChild(setting_btn);
     home_div.appendChild(achievement_btn);
+    home_div.appendChild(showaboutme_btn);
 
     document.getElementById("game").appendChild(home_div);
   }
@@ -410,7 +422,7 @@ class App {
     resultPage_time_num.id = "resultPage_time_num";
     resultPage_move_div.id = "resultPage_move";
     resultPage_move_lb.id = "resultPage_move_lb";
-    resultPage_move_num.id = "resultPage_move_lb";    
+    resultPage_move_num.id = "resultPage_move_lb";
     resultPage_restart_btn.id = "resultPage_restart";
     resultPage_next_btn.id = "resultPage_next";
     resultPage_home_btn.id = "resultPage_home";
@@ -613,7 +625,7 @@ class App {
     brickNumSetting_div.appendChild(BrickCount_div);
     brickNumSetting_div.appendChild(increaseBrickCount_div);
     brickStyleSetting_div.appendChild(backgroundStyleTXT_div);
-    brickStyleSetting_div.appendChild(document.createElement('div')).innerHTML = `<div style="font-size: 16px">` + this.materialManager.backgrounds.map(l => `<img width="64" onclick="app.changeBackground('${l}')" onmouseover="app.changeBackground('${l}')" src="img/${l}-${this.materialManager.list[l].sameWall ? 'wall' : 'back'}.png" />`).join('') + `</div>`
+    brickStyleSetting_div.appendChild(document.createElement('div')).innerHTML = `<div style="font-size: 16px">` + this.materialManager.backgrounds.map(l => `<img width="64" onclick="app.backgroundMaterialName='${l}'" onmouseleave="app.changeBackground()" onmouseover="app.changeBackground('${l}')" src="img/${l}-${this.materialManager.list[l].sameWall ? 'wall' : 'back'}.png" />`).join('') + `</div>`
     brickStyleSetting_div.appendChild(brickStyleTXT_div);
     brickStyleSetting_div.appendChild(brickShow_div);
     setting_div.appendChild(brickNumSetting_div);
@@ -684,9 +696,9 @@ class App {
 
   /**
    * 插入成就
-   * @param {string} context 
-   * @param {number} type 
-   * @param {flag} locked 
+   * @param {string} context
+   * @param {number} type
+   * @param {flag} locked
    */
   insertAchievementElement(context, type, locked) {
     var new_achievement_element = document.createElement("div");
@@ -705,6 +717,33 @@ class App {
     }
   }
 
+  /**
+   * 顯示關於頁面
+   */
+  showAboutMe() {
+    this.clearPage();
+    var about_me_background_div = document.createElement("div");
+    var context_div = document.createElement("div");
+    var gohome_btn = document.createElement("button");
+
+    gohome_btn.onclick = () => { this.gotoHome() };
+
+    about_me_background_div.id = "about_me_background";
+    context_div.id = "about_me_context";
+    gohome_btn.id = "gohome";
+
+    context_div.innerHTML = `團隊名稱：<a href="https://github.com/Straight-A-students/" target="_blank">Straight A Students</a><br>
+    成員：XMAX, xiplus, MAHADADA, oldA5, Orcinus<br>
+    <br>
+    背景音樂：<a href="https://youtu.be/${this.bgm_player.getVideoData().video_id}" target="_blank">${this.bgm_player.getVideoData().title}</a><br>
+    3D graph renderer powered by <a href="https://threejs.org/" target="_blank">three.js</a><br>
+    `;
+
+    about_me_background_div.appendChild(context_div);
+    about_me_background_div.appendChild(gohome_btn);
+
+    document.getElementById('game').appendChild(about_me_background_div);
+  }
 
   // Game page: playing
 
@@ -730,7 +769,7 @@ class App {
     }
 
     this.game.pause()
-    this.displayer.submitAnimate(this.game.isResolve(), () => 
+    this.displayer.submitAnimate(this.game.isResolve(), () =>
       this.afterSubmitAnim())
   }
 
@@ -950,8 +989,8 @@ class App {
 
   /**
    * 呼叫顯示成就
-   * @param {String} title 
-   * @param {String} context 
+   * @param {String} title
+   * @param {String} context
    */
   showAchievement(title, context) {
     this.noticeStack.push({title:title, context:context});
