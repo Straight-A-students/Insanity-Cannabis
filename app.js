@@ -3,7 +3,7 @@ import { Displayer, Displayer4BrickStyle } from './displayer.js';
 import { SelectorBrick } from './brick.js';
 import { MaterialManager } from './material.js';
 import { AchievementManager, ACHIEVEMENTEVENT } from './achievement.js';
-import { MoveTip, QuickRotate, ContinuousSubmit } from './achievement_list.js';
+import { ZeroStepPassGame } from './achievement_list.js';
 
 
 const STORAGEKEY = 'InsanityCannabisData';
@@ -16,7 +16,9 @@ class App {
    * 初始化App
    */
   constructor(bgm_player) {
-    this.materialManager = new MaterialManager([{
+    this.materialManager = new MaterialManager(
+      [
+        {
           type: MaterialManager.BACKGROUND,
           label: 'bg-sky',
         }, {
@@ -135,24 +137,23 @@ class App {
           label: 'nope',
           length: 1,
         },
-      ])
+      ]
+    )
 
     this.achievementManager = new AchievementManager();
-    this.achievementManager.addAchievement(new MoveTip(this, 5));
-    this.achievementManager.addAchievement(new MoveTip(this, 10));
-    this.achievementManager.addAchievement(new QuickRotate(this, 5, 3));
-    this.achievementManager.addAchievement(new ContinuousSubmit(this, 3));
+    this.achievementManager.addAchievement(new ZeroStepPassGame(this, 'zero-pass-game'));
 
     this.displayer = new Displayer(document.getElementById('render'));
     this.displayer4BrickStyle = new Displayer4BrickStyle(null);
     this.brickCount = 4;
     this.materialName = '08-octangle-full';
     this.backgroundMaterialName = 'bg-sky';
-    this.unlockedBricks = new Set([ '08-octangle-full' ])
+    this.unlockedBricks = new Set(['08-octangle-full'])
     this.game = null;
     this.volume = 75;
     this.bgm_player = bgm_player;
     this.inGame = false;
+    this.unblockedAchievement = [];
     this.brickStyles = this.materialManager.brickStyles.map(n =>
       new SelectorBrick(this, n))
     this.brickStyles.forEach(b =>
@@ -171,8 +172,8 @@ class App {
 
   changeBackground(label) {
     this.displayer.scene.background =
-    this.displayer4BrickStyle.scene.background =
-    this.materialManager.get(label || this.backgroundMaterialName)
+      this.displayer4BrickStyle.scene.background =
+      this.materialManager.get(label || this.backgroundMaterialName)
   }
 
   displayBrickStyle(appElem) {
@@ -190,7 +191,7 @@ class App {
     this.unlockedBricks.add(label)
     this.displayer4BrickStyle.selectorBricks.find(b =>
       b.label == label)
-    .enable()
+      .enable()
   }
 
   // Home page
@@ -602,14 +603,14 @@ class App {
 
     if (locked) {
       new_achievement_element.classList.add("locked");
-    }else{
+    } else {
       new_achievement_element.classList.add("unlocked");
     }
 
-    switch(type) {
-      case 0: document.getElementById("normal-area").appendChild(new_achievement_element);break;
-      case 1: document.getElementById("special-area").appendChild(new_achievement_element);break;
-      case 2: document.getElementById("hide-area").appendChild(new_achievement_element);break;
+    switch (type) {
+      case 0: document.getElementById("normal-area").appendChild(new_achievement_element); break;
+      case 1: document.getElementById("special-area").appendChild(new_achievement_element); break;
+      case 2: document.getElementById("hide-area").appendChild(new_achievement_element); break;
     }
   }
 
@@ -889,7 +890,7 @@ class App {
    * @param {String} context
    */
   showAchievement(title, context) {
-    this.noticeStack.push({title:title, context:context});
+    this.noticeStack.push({ title: title, context: context });
     if (this.noticeIsBusy) {
       return;
     }
