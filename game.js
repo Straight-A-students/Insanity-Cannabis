@@ -135,21 +135,7 @@ class Game {
   }
 
   getTimeFormatted() {
-    let time = this.getTime();
-    let result = '';
-    if (time > 3600) {
-      result += Math.floor(time / 3600) + ':';
-      time -= Math.floor(time / 3600) * 3600;
-    }
-    if (time > 60) {
-      result += this.timePadding(Math.floor(time / 60)) + ':';
-      time -= Math.floor(time / 60) * 60;
-    }
-    result += this.timePadding(Math.floor(time));
-    time -= Math.floor(time);
-    result += '.';
-    result += this.timePadding(Math.floor(time * 100));
-    return result;
+    return Math.floor(this.getTime());
   }
 
   getStep() {
@@ -263,6 +249,35 @@ class Game {
       this.bricks[tip[0]].showArrowY(tip[2]);
     } else if (tip[1] == 'Z') {
       this.bricks[tip[0]].showArrowZ(tip[2]);
+    }
+  }
+
+  /**
+   * 匯出資料
+   */
+  dumps() {
+    return {
+      timeCounter: this.getTime(),
+      stepCounter: this.getStep(),
+      bricks: this.bricks.map(brick => brick.dumps()),
+    };
+  }
+
+  /**
+   * 匯入資料
+   * @param {Object} data - 資料
+   */
+  loads(data) {
+    this.timeCounter = data.timeCounter;
+    this.stepCounter = data.stepCounter;
+    this.app.updateMove();
+    this.bricks = [];
+    data.bricks.forEach((brick) => {
+      this.bricks.push(new GameBrick(this.app, brick.facePatternInitial));
+    });
+    this.app.displayer.setGameBricks(this.bricks);
+    for (let bid = 0; bid < this.app.brickCount; bid++) {
+      this.bricks[bid].loads(data.bricks[bid]);
     }
   }
 }

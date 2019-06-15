@@ -38,7 +38,7 @@ class Brick {
     this.app = app
     this.materialName = app.materialName
     this.facePattern = facePattern
-    this.facePatternOriginal = { ...facePattern }
+    this.facePatternInitial = { ...facePattern }
     this.renderObject = new THREE.Mesh(geometry, null)
     this.setMaterial(app.materialName, facePattern)
     this.mouseStartX = 0
@@ -446,6 +446,31 @@ class Brick {
       this.rotateZ(angle);
       return;
     }
+  }
+
+  /**
+   * 匯出資料
+   */
+  dumps() {
+    return {
+      facePattern: this.facePattern,
+      facePatternInitial: this.facePatternInitial,
+      facePatternOriginal: this.facePatternOriginal,
+      quaternion: this.renderObject.quaternion.toArray(),
+      quaternionOriginal: this.quaternionOriginal.toArray(),
+    };
+  }
+
+  /**
+   * 匯入資料
+   * @param {Object} data - 資料
+   */
+  loads(data) {
+    this.facePattern = { ...data.facePattern };
+    this.facePatternInitial = { ...data.facePatternInitial };
+    this.facePatternOriginal = { ...data.facePatternOriginal };
+    this.renderObject.quaternion.fromArray(data.quaternion);
+    this.quaternionOriginal = new THREE.Quaternion().fromArray(data.quaternionOriginal);
   }
 }
 

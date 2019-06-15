@@ -333,6 +333,54 @@ button:focus{
     white-space:nowrap;
     width: 50px;
 }
+#resultBackgroundPage{
+    z-index: 99;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+}
+#resultPage{
+    margin: 0px auto;
+    width: 500px;
+    /* height: 250px; */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -250px 0px 0px -250px;/*調整水平垂直置中*/
+    /* transform:translateY(50%); */
+    border: 2px black solid;
+    border-radius:10px;
+    background: rgb(255, 255, 255);
+}
+#resultPage_successful{
+    margin: 30px auto;
+    font-size: 50px;
+    font-weight: bolder;
+    width: fit-content;
+}
+#resultPage_timemoveblock{
+    margin: 30px auto;
+    width: fit-content;
+}
+#resultPage_timemoveblock > div{
+    padding: 5px;
+    margin-top: 5px;
+    white-space: nowrap;
+}
+#resultPage_timemoveblock > div > span.num{
+    float: right;
+}
+#resultPage > button{
+    margin: 30px auto;
+    display: block;
+    border: 2px black solid;
+    border-radius:10px;
+    /* background: rgb(255, 255, 255); */
+    background: inherit;
+}
 
 /* Temp */
 
