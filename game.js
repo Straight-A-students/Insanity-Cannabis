@@ -251,6 +251,35 @@ class Game {
       this.bricks[tip[0]].showArrowZ(tip[2]);
     }
   }
+
+  /**
+   * 匯出資料
+   */
+  dumps() {
+    return {
+      timeCounter: this.getTime(),
+      stepCounter: this.getStep(),
+      bricks: this.bricks.map(brick => brick.dumps()),
+    };
+  }
+
+  /**
+   * 匯入資料
+   * @param {Object} data - 資料
+   */
+  loads(data) {
+    this.timeCounter = data.timeCounter;
+    this.stepCounter = data.stepCounter;
+    this.app.updateMove();
+    this.bricks = [];
+    data.bricks.forEach((brick) => {
+      this.bricks.push(new GameBrick(this.app, brick.facePatternInitial));
+    });
+    this.app.displayer.setGameBricks(this.bricks);
+    for (let bid = 0; bid < this.app.brickCount; bid++) {
+      this.bricks[bid].loads(data.bricks[bid]);
+    }
+  }
 }
 
 

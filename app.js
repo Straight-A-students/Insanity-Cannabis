@@ -143,13 +143,21 @@ class App {
     this.game = null;
     this.volume = 75;
     this.bgm_player = bgm_player;
-    this.loadData();
+    this.inGame = false;
+    let facePattern = { top: 0, bottom: 1, front: 2, back: 3, right: 4, left: 5 }
+    this.brickStyles = this.materialManager.brickStyles.map(n => new SelectorBrick(this, facePattern, n))
     this.brickStyles = this.materialManager.brickStyles.map(n => 
       new SelectorBrick(this, n))
     this.brickStyles.forEach(b => 
       this.unlockedBricks.has(b.label) && b.enable())
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
     this.changeBackground()
+    this.gotoHome();
+    this.loadData();
+
+    window.onbeforeunload = () => {
+      this.storeData();
+    };
   }
 
   changeBackground(label) {
@@ -222,6 +230,7 @@ class App {
    */
   start() {
     this.clearPage();
+    this.inGame = true;
     this.game = new Game(this)
     this.displayer.display(Displayer.GAMMING)
     this.displayer4BrickStyle.display(Displayer.GAMMING)
@@ -715,6 +724,8 @@ class App {
    */
   exit() {
     this.gotoHome();
+    this.inGame = false;
+    this.storeData();
   }
 
   /**
@@ -787,6 +798,10 @@ class App {
     data.brickCount = this.brickCount;
     data.materialName = this.materialName;
     data.volume = this.volume;
+    data.inGame = this.inGame;
+    if (this.inGame) {
+      data.game = this.game.dumps();
+    }
     localStorage.setItem(STORAGEKEY, JSON.stringify(data));
   }
 
@@ -811,6 +826,13 @@ class App {
     }
     if (data.volume !== undefined) {
       this.volume = data.volume;
+    }
+    if (data.inGame !== undefined) {
+      this.inGame = data.inGame;
+      if (data.inGame) {
+        this.start();
+        this.game.loads(data.game);
+      }
     }
   }
 }
