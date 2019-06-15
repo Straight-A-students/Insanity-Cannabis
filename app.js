@@ -175,6 +175,13 @@ class App {
     this.displayer4BrickStyle.calcCamera()
   }
 
+  unlockBrick(label) {
+    this.unlockedBricks.add(label)
+    this.displayer4BrickStyle.selectorBricks.find(b => 
+      b.label == label)
+    .enable()
+  }
+
   // Home page
 
   /**
@@ -528,7 +535,7 @@ class App {
     brickNumSetting_div.appendChild(BrickCount_div);
     brickNumSetting_div.appendChild(increaseBrickCount_div);
     brickStyleSetting_div.appendChild(backgroundStyleTXT_div);
-    brickStyleSetting_div.appendChild(document.createElement('div')).innerHTML = `<div style="font-size: 16px">` + this.materialManager.backgrounds.map(l => `<img width="64" onclick="app.changeBackground('${l}')" onmouseover="app.changeBackground('${l}')" src="img/${l}-${this.materialManager.list[l].sameWall ? 'wall' : 'back'}.png" />`).join('') + `</div>`
+    brickStyleSetting_div.appendChild(document.createElement('div')).innerHTML = `<div style="font-size: 16px">` + this.materialManager.backgrounds.map(l => `<img width="64" onclick="app.backgroundMaterialName='${l}'" onmouseleave="app.changeBackground()" onmouseover="app.changeBackground('${l}')" src="img/${l}-${this.materialManager.list[l].sameWall ? 'wall' : 'back'}.png" />`).join('') + `</div>`
     brickStyleSetting_div.appendChild(brickStyleTXT_div);
     brickStyleSetting_div.appendChild(brickShow_div);
     setting_div.appendChild(brickNumSetting_div);
