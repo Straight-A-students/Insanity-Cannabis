@@ -128,6 +128,10 @@ class App {
           type: MaterialManager.BRICKSTYLE,
           label: '21',
           length: 9,
+        }, {
+          type: MaterialManager.OTHER, 
+          label: 'nope',
+          length: 1,
         },
       ])
     this.displayer = new Displayer(document.getElementById('render'));
@@ -135,12 +139,17 @@ class App {
     this.brickCount = 4;
     this.materialName = '08-octangle-full';
     this.backgroundMaterialName = 'bg-sky';
+    this.unlockedBricks = new Set([ '08-octangle-full' ])
     this.game = null;
     this.volume = 75;
     this.bgm_player = bgm_player;
     this.inGame = false;
     let facePattern = { top: 0, bottom: 1, front: 2, back: 3, right: 4, left: 5 }
     this.brickStyles = this.materialManager.brickStyles.map(n => new SelectorBrick(this, facePattern, n))
+    this.brickStyles = this.materialManager.brickStyles.map(n => 
+      new SelectorBrick(this, n))
+    this.brickStyles.forEach(b => 
+      this.unlockedBricks.has(b.label) && b.enable())
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
     this.changeBackground()
     this.gotoHome();
@@ -161,9 +170,9 @@ class App {
     this.displayer4BrickStyle.applyContainer(appElem)
     this.displayer4BrickStyle.resize()
     Object.assign(this.displayer4BrickStyle.cameraInfo, {
-      r: 8,
-      theta: this.displayer4BrickStyle.selectorBrickStartY,
-      phi: .5,
+      r: 10, 
+      theta: this.displayer4BrickStyle.selectorBrickStartY, 
+      phi: -.5, 
     })
     this.displayer4BrickStyle.calcCamera()
   }
@@ -227,10 +236,13 @@ class App {
     this.displayer4BrickStyle.display(Displayer.GAMMING)
     var play_div = document.createElement("div");
     var pause_btn = document.createElement("button");
+    this.pause_btn = pause_btn;
     var submit_btn = document.createElement("button");
+    this.submit_btn = submit_btn;
     var tip_btn = document.createElement("button");
     // var canvas_div = document.createElement("div");
     var timemoveblock_div = document.createElement("div");
+    this.timemoveblock_div = timemoveblock_div;
     var time_div = document.createElement("div");
     var time_lb = document.createElement("span");
     var time_num = document.createElement("span");
@@ -248,6 +260,21 @@ class App {
     var volume_icon = document.createElement("div");
     var volume_ipt = document.createElement("input");
     var output_div = document.createElement("div");
+    var resultBackgroundPage_div = document.createElement("div"); // Result Page Background
+    var resultPage_div = document.createElement("div");
+    var resultPage_successful_div = document.createElement("div");
+    var resultPage_timemoveblock_div = document.createElement("div");
+    var resultPage_time_div = document.createElement("div");
+    var resultPage_time_lb = document.createElement("span");
+    var resultPage_time_num = document.createElement("span");
+    this.resultPage_time_num = resultPage_time_num;
+    var resultPage_move_div = document.createElement("div");
+    var resultPage_move_lb = document.createElement("span");
+    var resultPage_move_num = document.createElement("span");
+    this.resultPage_move_num = resultPage_move_num;
+    var resultPage_restart_btn = document.createElement("button");
+    var resultPage_next_btn = document.createElement("button");
+    var resultPage_home_btn = document.createElement("button");
     var bgmCredit_div = document.createElement("div");
     var bgmCreditText = document.createTextNode("現在播放：");
     var bgmCreditLink = document.createElement("a");
@@ -261,6 +288,16 @@ class App {
     volume_ipt.oninput = () => {
       this.setVolume(volume_ipt.value);
     };
+    resultBackgroundPage_div.onclick = (e) => {
+      if (e.path.some(e => e.id == 'resultPage')) {
+        return;
+      }
+      this.showGameEnd();
+    };
+    this.isShowGameEnd = false;
+    resultPage_restart_btn.onclick = () => { this.restart(); };
+    resultPage_next_btn.onclick = () => { this.newGame(); };
+    resultPage_home_btn.onclick = () => { this.exit(); };
 
     play_div.id = "play";
     pause_btn.id = "pause";
@@ -283,6 +320,19 @@ class App {
     volume_icon.id = "volume_icon";
     volume_ipt.id = "volume";
     output_div.id = "output";
+    resultBackgroundPage_div.id = "resultBackgroundPage"; // Result Page Background
+    resultPage_div.id = "resultPage";
+    resultPage_successful_div.id = "resultPage_successful";
+    resultPage_timemoveblock_div.id = "resultPage_timemoveblock";
+    resultPage_time_div.id = "resultPage_time";
+    resultPage_time_lb.id = "resultPage_time_lb";
+    resultPage_time_num.id = "resultPage_time_num";
+    resultPage_move_div.id = "resultPage_move";
+    resultPage_move_lb.id = "resultPage_move_lb";
+    resultPage_move_num.id = "resultPage_move_lb";    
+    resultPage_restart_btn.id = "resultPage_restart";
+    resultPage_next_btn.id = "resultPage_next";
+    resultPage_home_btn.id = "resultPage_home";
     bgmCredit_div.id = "bgmCredit";
     bgmCreditLink.id = "bgmCreditLink";
     bgmCreditLink.href = `https://youtu.be/${this.bgm_player.getVideoData().video_id}`;
@@ -293,6 +343,10 @@ class App {
     time_num.classList.add("num");
     move_lb.classList.add("lb");
     move_num.classList.add("num");
+    resultPage_time_lb.classList.add("lb");
+    resultPage_time_num.classList.add("num");
+    resultPage_move_lb.classList.add("lb");
+    resultPage_move_num.classList.add("num");
 
     submit_btn.innerText = "submit";
     tip_btn.innerText = "tip";
@@ -304,6 +358,14 @@ class App {
     restart_btn.innerText = "重新遊戲";
     exit_btn.innerText = "結束遊戲";
     output_div.innerText = this.volume.toString();
+    resultPage_successful_div.innerText = "成功";
+    resultPage_time_lb.innerText = "time:";
+    resultPage_time_num.innerText = "12345";
+    resultPage_move_lb.innerText = "move:";
+    resultPage_move_num.innerText = "0";
+    resultPage_restart_btn.innerText = "再玩一次";
+    resultPage_next_btn.innerText = "開新一局";
+    resultPage_home_btn.innerText = "回到首頁";
 
     volume_ipt.type = "range";
     volume_ipt.min = "0";
@@ -332,11 +394,25 @@ class App {
     pausePage_div.appendChild(bgmCredit_div);
     bgmCredit_div.appendChild(bgmCreditText);
     bgmCredit_div.appendChild(bgmCreditLink);
+    resultBackgroundPage_div.appendChild(resultPage_div);
+    resultPage_div.appendChild(resultPage_successful_div);
+    resultPage_div.appendChild(resultPage_timemoveblock_div);
+    resultPage_div.appendChild(resultPage_restart_btn);
+    resultPage_div.appendChild(resultPage_next_btn);
+    resultPage_div.appendChild(resultPage_home_btn);
+    resultPage_timemoveblock_div.appendChild(resultPage_time_div);
+    resultPage_timemoveblock_div.appendChild(resultPage_move_div);
+    resultPage_time_div.appendChild(resultPage_time_lb);
+    resultPage_time_div.appendChild(resultPage_time_num);
+    resultPage_move_div.appendChild(resultPage_move_lb);
+    resultPage_move_div.appendChild(resultPage_move_num);
 
     pauseBackgroundPage_div.style.display = "none";
+    resultBackgroundPage_div.style.display = "none";
 
     document.getElementById("game").appendChild(play_div);
     document.getElementById("game").appendChild(pauseBackgroundPage_div);
+    document.getElementById("game").appendChild(resultBackgroundPage_div);
 
     this.timeInt = setInterval(() => {
       time_num.innerText = Math.floor(this.game.getTime());
@@ -526,6 +602,10 @@ class App {
    * 暫停遊戲
    */
   pause() {
+    if (this.displayer.processingAnimate) {
+      return
+    }
+
     this.game.pause();
     document.getElementById('pauseBackgroundPage').style.display = 'block';
   }
@@ -535,12 +615,24 @@ class App {
    * @todo 應該要顯示結算畫面，尚未完成，暫時直接開始新遊戲
    */
   submit() {
+    if (this.displayer.processingAnimate) {
+      return
+    }
+
+    this.game.pause()
+    this.displayer.submitAnimate(this.game.isResolve(), () => 
+      this.afterSubmitAnim())
+  }
+
+  afterSubmitAnim() {
     if (this.game.isResolve()) {
       clearInterval(this.timeInt);
-      alert('Mission clear! Starting a new game.');
-      this.start(); // Temporary
+      this.showResult();
+      this.displayer.mouseInfo.mouseDown = false // will be removed
     } else {
+      this.game.start()
       alert('Not yet');
+      this.displayer.mouseInfo.mouseDown = false // will be removed
     }
   }
 
@@ -567,14 +659,64 @@ class App {
   }
 
   /**
+   * 顯示結算
+   */
+  showResult() {
+    document.getElementById('resultBackgroundPage').style.display = 'block';
+    this.resultPage_time_num.innerText = this.game.getTimeFormatted();
+    this.resultPage_move_num.innerText = this.game.getStepFormatted();
+    this.pause_btn.style.display = 'none';
+    this.timemoveblock_div.style.display = 'none';
+    this.submit_btn.style.display = 'none';
+  }
+
+  /**
+   * 結算中顯示遊戲畫面
+   */
+  showGameEnd() {
+    if (this.isShowGameEnd) {
+      document.getElementById('resultBackgroundPage').style.background = 'rgba(255, 255, 255, 0)';
+      document.getElementById('resultPage').style.display = 'none';
+    }
+    else {
+      document.getElementById('resultBackgroundPage').style.background = 'rgba(255, 255, 255, 0.8)';
+      document.getElementById('resultPage').style.display = 'block';
+    }
+    this.isShowGameEnd = !this.isShowGameEnd;
+  }
+
+  /**
    * 重新開始遊戲
-   * @todo 應該為同一關卡重新開始，尚未完成
    */
   restart() {
     this.game.restart();
     document.getElementById('pauseBackgroundPage').style.display = 'none';
+    document.getElementById('resultBackgroundPage').style.display = 'none';
     this.time_num.innerText = 0;
     this.move_num.innerText = 0;
+    this.pause_btn.style.display = 'block';
+    this.timemoveblock_div.style.display = 'block';
+    this.submit_btn.style.display = 'block';
+    this.timeInt = setInterval(() => {
+      this.time_num.innerText = this.game.getTimeFormatted();
+    }, 100);
+  }
+
+  /**
+   * 開始新的遊戲
+   */
+  newGame() {
+    this.game = new Game(this);
+    document.getElementById('pauseBackgroundPage').style.display = 'none';
+    document.getElementById('resultBackgroundPage').style.display = 'none';
+    this.time_num.innerText = 0;
+    this.move_num.innerText = 0;
+    this.pause_btn.style.display = 'block';
+    this.timemoveblock_div.style.display = 'block';
+    this.submit_btn.style.display = 'block';
+    this.timeInt = setInterval(() => {
+      this.time_num.innerText = Math.floor(this.game.getTime());
+    }, 100);
   }
 
   /**

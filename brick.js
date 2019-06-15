@@ -34,23 +34,17 @@ class Brick {
    * @param {{top:number, bottom:number, left:number, right:number, front:number, back:number}} facePattern
    */
   constructor(app, facePattern) {
-    let textures = app.materialManager.get(app.materialName)
-      , geometry = new THREE.BoxGeometry(2, 2, 2)
-      , material = BRICKFACEKEYS.map(k => 
-        new THREE.MeshPhongMaterial({
-          map: textures[facePattern[k]],
-          transparent: true,
-        }))
+    let geometry = new THREE.BoxGeometry(2, 2, 2)
     this.app = app
     this.materialName = app.materialName
     this.facePattern = facePattern
     this.facePatternInitial = { ...facePattern }
-    this.renderObject = new THREE.Mesh(geometry, material)
+    this.renderObject = new THREE.Mesh(geometry, null)
+    this.setMaterial(app.materialName, facePattern)
     this.mouseStartX = 0
     this.mouseStartY = 0
     this.mouseLastX = 0
     this.mouseLastY = 0
-    this.mouseDown = false
     this.disableMouse = false;
 
     this.disableTip = false;
@@ -212,6 +206,23 @@ class Brick {
     this.quaternionOriginal = this.renderObject.quaternion.clone()
   }
 
+  setMaterial (materialName = 'nope', facePattern) {
+    if (! facePattern) {
+      facePattern = {}
+      for (let k of BRICKFACEKEYS)
+        facePattern[k] = 0
+    }
+
+    this.materialName = materialName
+    let textures = this.app.materialManager.get(materialName)
+      , material = BRICKFACEKEYS.map(k => 
+        new THREE.MeshPhongMaterial({
+          map: textures[facePattern[k]],
+          transparent: true,
+        }))
+    this.renderObject.material = material
+  }
+
   /**
    * 以 x 為軸，朝向 x- 順時針旋轉
    * @param {number} brickId - 第幾個 Brick
@@ -305,6 +316,10 @@ class Brick {
    * @param {number} faceZ
    */
   mouseDownEvent(x, y, faceX, faceY, faceZ) {
+    if (this.disableMouse || this.app.displayer.processingAnimate) {
+      return
+    }
+
     this.mouseStartX = x
     this.mouseStartY = y
     this.mouseLastX = x
@@ -315,7 +330,6 @@ class Brick {
     this.face = new THREE.Vector3(faceX, faceY, faceZ)
     this.faceNormalVector = new THREE.Vector3(faceX, faceY, faceZ).applyQuaternion(this.renderObject.quaternion).round()
     this.startQuaternion = this.renderObject.quaternion.clone()
-    this.mouseDown = true
     this.lockOnX = false
     this.lockOnY = false
     this.axisX = new THREE.Vector3(0, 1, 0)
@@ -328,11 +342,7 @@ class Brick {
    * @param {number} y
    */
   mouseMoveEvent(x, y) {
-    if (!this.mouseDown) {
-      return
-    }
-
-    if (this.disableMouse) {
+    if (this.disableMouse || this.app.displayer.processingAnimate) {
       return
     }
 
@@ -367,11 +377,10 @@ class Brick {
    *
    */
   mouseUpEvent() {
-    if (this.disableMouse) {
+    if (this.disableMouse || this.app.displayer.processingAnimate) {
       return
     }
 
-    this.mouseDown = false
     this.lockOnX = false
     this.lockOnY = false
     this.disableMouse = true
@@ -505,17 +514,34 @@ class SelectorBrick extends Brick {
    * @param {!string} materialName - 材質名稱
    * @param {{top:number, bottom:number, left:number, right:number, front:number, back:number}} facePattern
    */
-  constructor(app, facePattern, materialName) {
-    [ app.materialName, materialName ] = [ materialName, app.materialName ]
-    super(app, facePattern);
-    [ app.materialName, materialName ] = [ materialName, app.materialName ]
+  constructor(app, materialName) {
+    super(app, SelectorBrick.facePattern)
+    this.label = materialName
+    this.unlocked = false
+    this.disable()
+  }
+
+  enable () {
+    this.unlocked = true
+    this.setMaterial(this.label, SelectorBrick.facePattern)
+  }
+
+  disable () {
+    this.unlocked = false
+    this.setMaterial('nope')
   }
 
   mouseUpEvent() {
     super.mouseUpEvent()
-    this.app.materialName = this.materialName
+    if (! this.unlocked) {
+      return
+    }
+
+    this.app.materialName = this.label
     this.app.storeData()
   }
 }
+
+SelectorBrick.facePattern = { top: 0, bottom: 1, front: 2, back: 3, right: 4, left: 5 }
 
 export { GameBrick, SelectorBrick }
