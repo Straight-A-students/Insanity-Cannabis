@@ -87,63 +87,63 @@ class App {
   /**
    * 初始化App
    */
-  constructor() {
+  constructor(bgm_player) {
     this.materialManager = new MaterialManager([{
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           label: 'bg-sky',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           label: 'bg-02',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           sameWall: true,
           label: 'bg-03',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           sameWall: true,
           label: 'bg-04',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           sameWall: true,
           label: 'bg-04-1',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           sameWall: true,
           label: 'bg-04-2',
         }, {
-          type: MaterialManager.BACKGROUND, 
+          type: MaterialManager.BACKGROUND,
           sameWall: true,
           label: 'bg-04-3',
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: 'dice',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '01',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '02',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '03',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '04',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '05',
           length: 7,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '06',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '07',
           length: 9,
         }, {
@@ -151,57 +151,61 @@ class App {
           label: '08-octangle-full',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '09',
           length: 7,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '10',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '11-octangle-transparet',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '12',
           length: 7,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '13',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '14',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '15',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '16',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '17',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '18',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '19',
           length: 8,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '20',
           length: 9,
         }, {
-          type: MaterialManager.BRICKSTYLE, 
+          type: MaterialManager.BRICKSTYLE,
           label: '21',
           length: 9,
+        }, {
+          type: MaterialManager.OTHER, 
+          label: 'nope',
+          length: 1,
         },
       ])
 
@@ -216,21 +220,32 @@ class App {
     this.brickCount = 4;
     this.materialName = '08-octangle-full';
     this.backgroundMaterialName = 'bg-sky';
+    this.unlockedBricks = new Set([ '08-octangle-full' ])
     this.game = null;
-    this.volume = 1;
-    this.bgm = null; // TODO
-    this.loadData();
+    this.volume = 75;
+    this.bgm_player = bgm_player;
+    this.inGame = false;
     let facePattern = { top: 0, bottom: 1, front: 2, back: 3, right: 4, left: 5 }
     this.brickStyles = this.materialManager.brickStyles.map(n => new SelectorBrick(this, facePattern, n))
+    this.brickStyles = this.materialManager.brickStyles.map(n => 
+      new SelectorBrick(this, n))
+    this.brickStyles.forEach(b => 
+      this.unlockedBricks.has(b.label) && b.enable())
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
     this.changeBackground()
     this.noticeStack = [];
     this.noticeIsBusy = false;
+    this.gotoHome();
+    this.loadData();
+
+    window.onbeforeunload = () => {
+      this.storeData();
+    };
   }
 
   changeBackground(label) {
-    this.displayer.scene.background = 
-    this.displayer4BrickStyle.scene.background = 
+    this.displayer.scene.background =
+    this.displayer4BrickStyle.scene.background =
     this.materialManager.get(label || this.backgroundMaterialName)
   }
 
@@ -238,9 +253,9 @@ class App {
     this.displayer4BrickStyle.applyContainer(appElem)
     this.displayer4BrickStyle.resize()
     Object.assign(this.displayer4BrickStyle.cameraInfo, {
-      r: 8, 
+      r: 10, 
       theta: this.displayer4BrickStyle.selectorBrickStartY, 
-      phi: .5,
+      phi: -.5, 
     })
     this.displayer4BrickStyle.calcCamera()
   }
@@ -298,14 +313,19 @@ class App {
    */
   start() {
     this.clearPage();
+    this.inGame = true;
     this.game = new Game(this)
     this.displayer.display(Displayer.GAMMING)
     this.displayer4BrickStyle.display(Displayer.GAMMING)
     var play_div = document.createElement("div");
     var pause_btn = document.createElement("button");
+    this.pause_btn = pause_btn;
     var submit_btn = document.createElement("button");
+    this.submit_btn = submit_btn;
+    var tip_btn = document.createElement("button");
     // var canvas_div = document.createElement("div");
     var timemoveblock_div = document.createElement("div");
+    this.timemoveblock_div = timemoveblock_div;
     var time_div = document.createElement("div");
     var time_lb = document.createElement("span");
     var time_num = document.createElement("span");
@@ -323,20 +343,49 @@ class App {
     var volume_icon = document.createElement("div");
     var volume_ipt = document.createElement("input");
     var output_div = document.createElement("div");
+    var resultBackgroundPage_div = document.createElement("div"); // Result Page Background
+    var resultPage_div = document.createElement("div");
+    var resultPage_successful_div = document.createElement("div");
+    var resultPage_timemoveblock_div = document.createElement("div");
+    var resultPage_time_div = document.createElement("div");
+    var resultPage_time_lb = document.createElement("span");
+    var resultPage_time_num = document.createElement("span");
+    this.resultPage_time_num = resultPage_time_num;
+    var resultPage_move_div = document.createElement("div");
+    var resultPage_move_lb = document.createElement("span");
+    var resultPage_move_num = document.createElement("span");
+    this.resultPage_move_num = resultPage_move_num;
+    var resultPage_restart_btn = document.createElement("button");
+    var resultPage_next_btn = document.createElement("button");
+    var resultPage_home_btn = document.createElement("button");
+    var bgmCredit_div = document.createElement("div");
+    var bgmCreditText = document.createTextNode("現在播放：");
+    var bgmCreditLink = document.createElement("a");
 
     pause_btn.onclick = () => { this.pause(); };
     submit_btn.onclick = () => { this.submit(); };
+    tip_btn.onclick = () => { this.tip(); };
     continue_btn.onclick = () => { this.continue(); };
     restart_btn.onclick = () => { this.restart(); };
     exit_btn.onclick = () => { this.exit(); };
     volume_ipt.oninput = () => {
       this.setVolume(volume_ipt.value);
-      this.storeData();
     };
+    resultBackgroundPage_div.onclick = (e) => {
+      if (e.path.some(e => e.id == 'resultPage')) {
+        return;
+      }
+      this.showGameEnd();
+    };
+    this.isShowGameEnd = false;
+    resultPage_restart_btn.onclick = () => { this.restart(); };
+    resultPage_next_btn.onclick = () => { this.newGame(); };
+    resultPage_home_btn.onclick = () => { this.exit(); };
 
     play_div.id = "play";
     pause_btn.id = "pause";
     submit_btn.id = "submit";
+    tip_btn.id = "tip";
     // canvas_div.id = "canvas-area";
     timemoveblock_div.id = "timemoveblock";
     time_div.id = "time";
@@ -351,17 +400,39 @@ class App {
     restart_btn.id = "restart";
     exit_btn.id = "exit";
     volumeSetting_div.id = "volumeSetting";
-    volumeSetting_div.style = "display: none;"; // Temporary
     volume_icon.id = "volume_icon";
     volume_ipt.id = "volume";
     output_div.id = "output";
+    resultBackgroundPage_div.id = "resultBackgroundPage"; // Result Page Background
+    resultPage_div.id = "resultPage";
+    resultPage_successful_div.id = "resultPage_successful";
+    resultPage_timemoveblock_div.id = "resultPage_timemoveblock";
+    resultPage_time_div.id = "resultPage_time";
+    resultPage_time_lb.id = "resultPage_time_lb";
+    resultPage_time_num.id = "resultPage_time_num";
+    resultPage_move_div.id = "resultPage_move";
+    resultPage_move_lb.id = "resultPage_move_lb";
+    resultPage_move_num.id = "resultPage_move_lb";    
+    resultPage_restart_btn.id = "resultPage_restart";
+    resultPage_next_btn.id = "resultPage_next";
+    resultPage_home_btn.id = "resultPage_home";
+    bgmCredit_div.id = "bgmCredit";
+    bgmCreditLink.id = "bgmCreditLink";
+    bgmCreditLink.href = `https://youtu.be/${this.bgm_player.getVideoData().video_id}`;
+    bgmCreditLink.target = "_blank";
+    bgmCreditLink.innerText = this.bgm_player.getVideoData().title;
 
     time_lb.classList.add("lb");
     time_num.classList.add("num");
     move_lb.classList.add("lb");
     move_num.classList.add("num");
+    resultPage_time_lb.classList.add("lb");
+    resultPage_time_num.classList.add("num");
+    resultPage_move_lb.classList.add("lb");
+    resultPage_move_num.classList.add("num");
 
     submit_btn.innerText = "submit";
+    tip_btn.innerText = "tip";
     time_lb.innerText = "time:";
     time_num.innerText = "12345"
     move_lb.innerText = "move:";
@@ -369,14 +440,23 @@ class App {
     continue_btn.innerText = "繼續遊戲";
     restart_btn.innerText = "重新遊戲";
     exit_btn.innerText = "結束遊戲";
-    output_div.innerText = "75";
+    output_div.innerText = this.volume.toString();
+    resultPage_successful_div.innerText = "成功";
+    resultPage_time_lb.innerText = "time:";
+    resultPage_time_num.innerText = "12345";
+    resultPage_move_lb.innerText = "move:";
+    resultPage_move_num.innerText = "0";
+    resultPage_restart_btn.innerText = "再玩一次";
+    resultPage_next_btn.innerText = "開新一局";
+    resultPage_home_btn.innerText = "回到首頁";
 
     volume_ipt.type = "range";
     volume_ipt.min = "0";
     volume_ipt.max = "100";
-    volume_ipt.value = "75";
+    volume_ipt.value = this.volume.toString();
 
     play_div.appendChild(submit_btn);
+    play_div.appendChild(tip_btn);
     // play_div.appendChild(canvas_div);
     play_div.appendChild(timemoveblock_div);
     play_div.appendChild(pause_btn);
@@ -394,11 +474,28 @@ class App {
     volumeSetting_div.appendChild(volume_icon);
     volumeSetting_div.appendChild(volume_ipt);
     volumeSetting_div.appendChild(output_div);
+    pausePage_div.appendChild(bgmCredit_div);
+    bgmCredit_div.appendChild(bgmCreditText);
+    bgmCredit_div.appendChild(bgmCreditLink);
+    resultBackgroundPage_div.appendChild(resultPage_div);
+    resultPage_div.appendChild(resultPage_successful_div);
+    resultPage_div.appendChild(resultPage_timemoveblock_div);
+    resultPage_div.appendChild(resultPage_restart_btn);
+    resultPage_div.appendChild(resultPage_next_btn);
+    resultPage_div.appendChild(resultPage_home_btn);
+    resultPage_timemoveblock_div.appendChild(resultPage_time_div);
+    resultPage_timemoveblock_div.appendChild(resultPage_move_div);
+    resultPage_time_div.appendChild(resultPage_time_lb);
+    resultPage_time_div.appendChild(resultPage_time_num);
+    resultPage_move_div.appendChild(resultPage_move_lb);
+    resultPage_move_div.appendChild(resultPage_move_num);
 
     pauseBackgroundPage_div.style.display = "none";
+    resultBackgroundPage_div.style.display = "none";
 
     document.getElementById("game").appendChild(play_div);
     document.getElementById("game").appendChild(pauseBackgroundPage_div);
+    document.getElementById("game").appendChild(resultBackgroundPage_div);
 
     this.timeInt = setInterval(() => {
       time_num.innerText = Math.floor(this.game.getTime());
@@ -590,6 +687,10 @@ class App {
    * 暫停遊戲
    */
   pause() {
+    if (this.displayer.processingAnimate) {
+      return
+    }
+
     this.game.pause();
     document.getElementById('pauseBackgroundPage').style.display = 'block';
   }
@@ -599,12 +700,36 @@ class App {
    * @todo 應該要顯示結算畫面，尚未完成，暫時直接開始新遊戲
    */
   submit() {
+    if (this.displayer.processingAnimate) {
+      return
+    }
+
+    this.game.pause()
+    this.displayer.submitAnimate(this.game.isResolve(), () => 
+      this.afterSubmitAnim())
+  }
+
+  afterSubmitAnim() {
     if (this.game.isResolve()) {
       clearInterval(this.timeInt);
-      alert('Mission clear! Starting a new game.');
-      this.start(); // Temporary
+      this.showResult();
+      this.displayer.mouseInfo.mouseDown = false // will be removed
     } else {
+      this.game.start()
       alert('Not yet');
+      this.displayer.mouseInfo.mouseDown = false // will be removed
+    }
+  }
+
+  /**
+   * 顯示提示
+   */
+  tip() {
+    let tip = this.game.getAnswer();
+    if (tip.length == 0) {
+      alert('沒有更多提示了');
+    } else {
+      this.game.showTip(tip[0]);
     }
     this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.CHECK_ANSWER, this.game.isResolve());
   }
@@ -620,14 +745,64 @@ class App {
   }
 
   /**
+   * 顯示結算
+   */
+  showResult() {
+    document.getElementById('resultBackgroundPage').style.display = 'block';
+    this.resultPage_time_num.innerText = this.game.getTimeFormatted();
+    this.resultPage_move_num.innerText = this.game.getStepFormatted();
+    this.pause_btn.style.display = 'none';
+    this.timemoveblock_div.style.display = 'none';
+    this.submit_btn.style.display = 'none';
+  }
+
+  /**
+   * 結算中顯示遊戲畫面
+   */
+  showGameEnd() {
+    if (this.isShowGameEnd) {
+      document.getElementById('resultBackgroundPage').style.background = 'rgba(255, 255, 255, 0)';
+      document.getElementById('resultPage').style.display = 'none';
+    }
+    else {
+      document.getElementById('resultBackgroundPage').style.background = 'rgba(255, 255, 255, 0.8)';
+      document.getElementById('resultPage').style.display = 'block';
+    }
+    this.isShowGameEnd = !this.isShowGameEnd;
+  }
+
+  /**
    * 重新開始遊戲
-   * @todo 應該為同一關卡重新開始，尚未完成
    */
   restart() {
     this.game.restart();
     document.getElementById('pauseBackgroundPage').style.display = 'none';
+    document.getElementById('resultBackgroundPage').style.display = 'none';
     this.time_num.innerText = 0;
     this.move_num.innerText = 0;
+    this.pause_btn.style.display = 'block';
+    this.timemoveblock_div.style.display = 'block';
+    this.submit_btn.style.display = 'block';
+    this.timeInt = setInterval(() => {
+      this.time_num.innerText = this.game.getTimeFormatted();
+    }, 100);
+  }
+
+  /**
+   * 開始新的遊戲
+   */
+  newGame() {
+    this.game = new Game(this);
+    document.getElementById('pauseBackgroundPage').style.display = 'none';
+    document.getElementById('resultBackgroundPage').style.display = 'none';
+    this.time_num.innerText = 0;
+    this.move_num.innerText = 0;
+    this.pause_btn.style.display = 'block';
+    this.timemoveblock_div.style.display = 'block';
+    this.submit_btn.style.display = 'block';
+    this.timeInt = setInterval(() => {
+      this.time_num.innerText = Math.floor(this.game.getTime());
+    }, 100);
   }
 
   /**
@@ -635,6 +810,8 @@ class App {
    */
   exit() {
     this.gotoHome();
+    this.inGame = false;
+    this.storeData();
   }
 
   /**
@@ -643,6 +820,9 @@ class App {
    */
   setVolume(value) {
     document.getElementById("output").innerHTML = value;
+    this.volume = value;
+    this.bgm_player.setVolume(value);
+    this.storeData();
   }
 
 
@@ -704,6 +884,10 @@ class App {
     data.brickCount = this.brickCount;
     data.materialName = this.materialName;
     data.volume = this.volume;
+    data.inGame = this.inGame;
+    if (this.inGame) {
+      data.game = this.game.dumps();
+    }
     localStorage.setItem(STORAGEKEY, JSON.stringify(data));
   }
 
@@ -728,6 +912,13 @@ class App {
     }
     if (data.volume !== undefined) {
       this.volume = data.volume;
+    }
+    if (data.inGame !== undefined) {
+      this.inGame = data.inGame;
+      if (data.inGame) {
+        this.start();
+        this.game.loads(data.game);
+      }
     }
   }
 
