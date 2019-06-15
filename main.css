@@ -389,7 +389,7 @@ button:focus{
     background: rgba(255, 255, 255, 0.6);
 }
 #about_me_context{
-    font-size: 12px;
+    font-size: 1em;
     margin: 10% auto 0 auto;
     width: 750px;
     height: auto;
