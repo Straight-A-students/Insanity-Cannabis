@@ -88,7 +88,7 @@ class Displayer {
     ddp.normalize()
     dp.addScaledVector(ddp, .2)
     dp.normalize()
-    xp.add(dp)
+    xp.addScaledVector(dp, .2)
     if (Math.hypot(xp.x, xp.y, xp.z) > 30) 
       xp.add(dp.negate())
   }
