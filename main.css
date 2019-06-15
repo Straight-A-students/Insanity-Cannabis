@@ -161,11 +161,11 @@ button:focus{
 }
 #setting{
     margin: 0px auto;
-    width: 60%;
+    width: 100%;
 }
 #brickNumSetting{
     width: 500px;
-    margin: 250px auto 0px auto;
+    margin: 100px auto 0px auto;
 }
 #brickNumSetting > div, button{
     display: inline-block;
@@ -198,12 +198,12 @@ button:focus{
     border: 2px black solid;
 }
 #brickStyleSetting{
-    width: 500px;
+    width: 80%;
     height: 250px;
     margin: 0 auto;
 }
 #brickShow{
-    width: 90%;
+    width: 100%;
     height: 200px;
 }
 #achievement{
@@ -379,6 +379,21 @@ button:focus{
     border-radius:10px;
     /* background: rgb(255, 255, 255); */
     background: inherit;
+}
+#about_me_background{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.6);
+}
+#about_me_context{
+    font-size: 1em;
+    margin: 10% auto 0 auto;
+    width: 750px;
+    height: auto;
+    background: rgba(255, 255, 255, 0);
 }
 
 /* Temp */
