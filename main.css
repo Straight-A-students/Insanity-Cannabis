@@ -2,6 +2,7 @@
     overscroll-behavior: none;
     font-family: Consolas;
     font-size: 1.12em;
+    user-select: none;
     -webkit-box-sizing: border-box;
        -moz-box-sizing: border-box;
             box-sizing: border-box;
@@ -11,6 +12,12 @@ body{
     padding: 0px;
     width: 100%;
     background-color: rgb(255, 255, 255);
+}
+#bgm_player{
+    z-index: -99;
+    position: fixed;
+    top: 0px;
+    left: 0px;
 }
 button{
     outline:none;
@@ -54,8 +61,8 @@ button:focus{
 }
 #pause{
     position: absolute;
-    top: 3%;
-    left: 3%;
+    top: 30px;
+    left: 30px;
     width: 70px;
     height: 70px;
     background: url(./icons/1556866831772.png) no-repeat;
@@ -64,8 +71,18 @@ button:focus{
 }
 #submit{
     position: absolute;
-    bottom: 3%;
-    left: 80%;
+    bottom: 30px;
+    right: 30px;
+    width: 130px;
+    height: 65px;
+    border: 2px black solid;
+    border-radius:10px;
+    background: rgb(255, 255, 255);
+}
+#tip{
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
     width: 130px;
     height: 65px;
     border: 2px black solid;
@@ -82,8 +99,8 @@ button:focus{
 }
 #timemoveblock{
     position: absolute;
-    top: 10%;
-    left: 80%;
+    top: 30px;
+    right: 30px;
 }
 #timemoveblock > div{
     padding: 5px;
@@ -92,7 +109,10 @@ button:focus{
     border-radius:10px;
     background: rgb(255, 255, 255);
     white-space:nowrap;
-    width: max-content;
+    width: 215px;
+}
+#timemoveblock > div > span.num{
+    float: right;
 }
 #rotation_x, #rotation_y, #rotation_z {
     padding: 2px;
@@ -121,7 +141,7 @@ button:focus{
 #pausePage{
     margin: 0px auto;
     width: 500px;
-    height: 250px;
+    height: 285px;
     position: relative;
     transform:translateY(50%);
     border: 2px black solid;
@@ -135,13 +155,17 @@ button:focus{
     border-radius:10px;
     background: rgb(255, 255, 255);
 }
+#bgmCredit {
+    font-size: 12px;
+    text-align: center;
+}
 #setting{
     margin: 0px auto;
-    width: 60%;
+    width: 100%;
 }
 #brickNumSetting{
     width: 500px;
-    margin: 250px auto 0px auto;
+    margin: 100px auto 0px auto;
 }
 #brickNumSetting > div, button{
     display: inline-block;
@@ -174,14 +198,13 @@ button:focus{
     border: 2px black solid;
 }
 #brickStyleSetting{
-    width: 500px;
+    width: 80%;
     height: 250px;
     margin: 0 auto;
 }
 #brickShow{
-    width: 90%;
+    width: 100%;
     height: 200px;
-    border: 2px black solid;
 }
 #achievement{
     margin: 0px auto;
@@ -238,13 +261,29 @@ button:focus{
 }
 #gohome{
     position: absolute;
-    top: 3%;
-    left: 3%;
+    top: 30px;
+    left: 30px;
     width: 70px;
     height: 70px;
     background: url(./icons/1556869699566.png) no-repeat;
     background-size: 100% 100%;
     border: none;
+}
+#loading{
+    width: 100%;
+    height: 100%;
+    background: white;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+#loadingContent{
+    text-align: center;
+    height: 30px;
+    width: 360px;
+    position: relative;
+    top: calc(50% - 15px);
+    left: calc(50% - 180px);
 }
 
 #volumeSetting{
@@ -292,6 +331,78 @@ button:focus{
     margin-left: 8px;
     white-space:nowrap;
     width: 50px;
+}
+.ticket::after{
+    content: "";
+    float: right;
+    width: 40px;
+    height: 40px;
+    background: url(./icons/tickets.png) no-repeat;
+    background-size: 100% 100%;
+    border: none;
+}
+#resultBackgroundPage{
+    z-index: 99;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+}
+#resultPage{
+    margin: 0px auto;
+    width: 500px;
+    /* height: 250px; */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -250px 0px 0px -250px;/*調整水平垂直置中*/
+    /* transform:translateY(50%); */
+    border: 2px black solid;
+    border-radius:10px;
+    background: rgb(255, 255, 255);
+}
+#resultPage_successful{
+    margin: 30px auto;
+    font-size: 50px;
+    font-weight: bolder;
+    width: fit-content;
+}
+#resultPage_timemoveblock{
+    margin: 30px auto;
+    width: fit-content;
+}
+#resultPage_timemoveblock > div{
+    padding: 5px;
+    margin-top: 5px;
+    white-space: nowrap;
+}
+#resultPage_timemoveblock > div > span.num{
+    float: right;
+}
+#resultPage > button{
+    margin: 30px auto;
+    display: block;
+    border: 2px black solid;
+    border-radius:10px;
+    /* background: rgb(255, 255, 255); */
+    background: inherit;
+}
+#about_me_background{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.6);
+}
+#about_me_context{
+    font-size: 1em;
+    margin: 10% auto 0 auto;
+    width: fit-content;
+    height: auto;
+    background: rgba(255, 255, 255, 0);
 }
 
 /* Temp */

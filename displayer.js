@@ -1,4 +1,4 @@
-const SKIP_ELEM_IDS = new Set([ 'volume' ])
+const SKIP_ELEM_IDS = new Set([ 'pauseBackgroundPage', 'resultBackgroundPage', 'pause', 'tip', 'submit', 'timemoveblock' ])
 
 /**
  * 顯示方塊
@@ -20,8 +20,8 @@ class Displayer {
       displayer: this,
       deltaXY (dx, dy) {
         let { displayer: { displayType } } = this
-        this.theta += (dy / 500) * (displayType == Displayer.GAMMING ? 1 : -1)
-        this.phi += (dx / 500) * (displayType == Displayer.GAMMING ? 1 : -1)
+        this.theta += (dy / 500) * (displayType == Displayer.GAMMING || displayType == Displayer.SELECTING ? 1 : -1)
+        this.phi += (dx / 500) * (displayType == Displayer.GAMMING || displayType == Displayer.SELECTING ? 1 : -1)
         if (this.theta > .4)
           this.theta = .4
         else if (this.theta < -.4)
@@ -36,6 +36,7 @@ class Displayer {
       lastX: 0,
       lastY: 0,
       mouseDown: false,
+      touchId: -1,
       interObject: null,
     }
     this.displayType = Displayer.BACKGROUND
@@ -45,18 +46,24 @@ class Displayer {
     this.selectorBricks = []
     this.gameGroup = new THREE.Group()
     this.selectorGroup = new THREE.Group()
+    this.selectorBrickStartY = 0
     this.appWidth = 0
     this.appHeight = 0
+    this.processingAnimate = false
     this.appElem = appElem
-    this.appElem.appendChild(this.renderer.domElement)
+    this.domElement = this.renderer.domElement
+    appElem && this.appElem.appendChild(this.domElement)
     this.camera.position.set(4, 4, 4)
     this.camera.lookAt(0, 0, 0)
     this.pointLight.position.setFromMatrixPosition(this.camera.matrix)
+    this.bug = new THREE.Mesh(new THREE.BoxGeometry(.2, .2, .2), new THREE.MeshBasicMaterial({ color: 0xffff00 }))
+    this.bugdp = new THREE.Vector3(1, 1, 1)
     this.scene.add(this.pointLight)
     this.scene.add(this.gameGroup)
     this.scene.add(this.selectorGroup)
+    this.scene.add(this.bug)
     this.calcCamera()
-    this.resize()
+    appElem && this.resize()
     window.addEventListener('resize', () => this.resize())
     window.addEventListener('mousedown', e => this.mouseDownEvent(e))
     window.addEventListener('mousemove', e => this.mouseMoveEvent(e))
@@ -65,8 +72,29 @@ class Displayer {
     window.addEventListener('touchmove', e => this.mouseMoveEvent(e))
     window.addEventListener('touchend', e => this.mouseUpEvent(e))
     window.addEventListener('wheel', e => this.wheelEvent(e))
+    this.eventList = [
+      () => this.renderer.render(this.scene, this.camera),
+      () => this.bugegg(),
+    ]
+    let exe = e => e()
     setInterval(() =>
-      this.renderer.render(this.scene, this.camera), 33)
+      this.eventList.forEach(exe), 33)
+  }
+
+  bugegg () {
+    let xp = this.bug.position
+      , dp = this.bugdp
+      , ddp = new THREE.Vector3(Math.random() - .5, Math.random() - .5, Math.random() - .5).cross(dp)
+    ddp.normalize()
+    dp.addScaledVector(ddp, .2)
+    dp.normalize()
+    xp.addScaledVector(dp, .2)
+    if (Math.hypot(xp.x, xp.y, xp.z) > 30) 
+      xp.add(dp.negate())
+  }
+
+  findBug () {
+    alert('Congratulation, ur a good bug finder !!1')
   }
 
   /**
@@ -87,6 +115,9 @@ class Displayer {
    */
   resize(width, height) {
     let { appElem, renderer, camera } = this
+    if (! appElem) 
+      return
+
     if (width == null || height == null) {
       let b = appElem.getBoundingClientRect()
       width = b.width
@@ -125,9 +156,15 @@ class Displayer {
       , startY = bricks.length / 2 * 3 - 1.5
     this.gameBricks = gameBricks
     gameGroup.children.length = 0
-    for (let { renderObject } of bricks) {
+    for (let { renderObject, arrowX, arrowY, arrowZ } of bricks) {
       gameGroup.add(renderObject)
+      gameGroup.add(arrowX)
+      gameGroup.add(arrowY)
+      gameGroup.add(arrowZ)
       renderObject.position.y = startY
+      arrowX.position.y = startY
+      arrowY.position.y = startY
+      arrowZ.position.y = startY
       startY -= 3
     }
 
@@ -139,9 +176,75 @@ class Displayer {
    */
   setBrickSelectors(bricks) {
     let selectorBricks = Array.from(bricks)
+      , startY = Math.floor(bricks.length / 5) / 2 * 3 - 1.5
+      , k = 0
+    this.selectorBrickStartY = startY
     this.selectorBricks = selectorBricks
-    this.selectorGroup.children = selectorBricks.map(b =>
+    this.selectorGroup.children = bricks.map(b => 
       b.renderObject)
+    for (let i = 0, l = bricks.length; i < l; i += 5) {
+      let r = Math.min(l - i, 5)
+        , startX = r / 2 * 3 - 1.5
+      for (let j = 0; j < r; j++) {
+        Object.assign(bricks[k++].renderObject.position, {
+          x: startX,
+          y: startY,
+        })
+
+        startX -= 3
+      }
+
+      startY -= 3
+    }
+  }
+
+  submitAnimate (resolved, callback) {
+    let dy = []
+      , t = 32
+      , { gameBricks: bricks } = this
+      , startY = bricks.length / 2 * 2 - 1.5
+      , rotateY = 2 * Math.PI / t
+      , st
+    for (let { renderObject: { position: { y } } } of bricks) {
+      dy.push((startY - y) / t)
+      startY -= 2
+    }
+
+    this.processingAnimate = true
+    st = setInterval(() => {
+      if (t --== 0) {
+        clearInterval(st)
+        this.gameGroup.rotation.y = 0
+        this.processingAnimate = false
+        if (resolved) 
+          callback()
+        else
+          this.submitFaultAnimate(callback)
+        return
+      }
+
+      this.gameGroup.rotation.y += rotateY
+      bricks.forEach(({ renderObject: { position } }, i) => 
+        position.y += dy[i])
+    }, 30)
+  }
+
+  submitFaultAnimate(callback) {
+    let t = 32
+      , st
+    this.processingAnimate = true
+    st = setInterval(() => {
+      if (t --== 0) {
+        clearInterval(st)
+        Object.assign(this.gameGroup.position, { x: 0, z: 0 })
+        this.processingAnimate = false
+        this.setGameBricks(this.gameBricks)
+        callback()
+        return
+      }
+
+      Object.assign(this.gameGroup.position, { x: Math.random() * .8, z: Math.random() * .8 })
+    }, 30)
   }
 
   /**
@@ -149,20 +252,24 @@ class Displayer {
    * @param {Event} e
    */
   mouseDownEvent(e) {
-    e.preventDefault()
-    if (SKIP_ELEM_IDS.has(e.path[0].id))
+    let { mouseInfo } = this
+    if (e.path.some(e => SKIP_ELEM_IDS.has(e.id)) || mouseInfo.mouseDown)
       return
 
-    if (e.type == 'touchstart')
-      e = e.touches[0]
+    if (e.type == 'touchstart') {
+      e = e.changedTouches[0]
+      mouseInfo.touchId = e.identifier
+    } else {
+      e.preventDefault()
+    }
 
-    let { mouseInfo } = this
     mouseInfo.lastX = e.clientX
     mouseInfo.lastY = e.clientY
     mouseInfo.mouseDown = true
     let [ brick, normal ] = this.calcMouseRay(e)
     mouseInfo.interObject = brick
     if (brick) {
+      console.log(brick)
       let { x, y, z } = normal
       brick.mouseDownEvent(e.clientX, e.clientY, x, y, z)
     }
@@ -177,8 +284,11 @@ class Displayer {
     if (! mouseInfo.mouseDown)
       return
 
-    if (e.type == 'touchmove')
+    if (e.type == 'touchmove') {
       e = e.touches[0]
+      if (e.identifier != mouseInfo.touchId) 
+        return
+    }
 
     let dx = e.clientX - mouseInfo.lastX
     let dy = e.clientY - mouseInfo.lastY
@@ -199,6 +309,12 @@ class Displayer {
   mouseUpEvent(e) {
     let { mouseInfo } = this
       , { interObject } = mouseInfo
+    if (e.type == 'touchend') {
+      e = e.changedTouches[0]
+      if (e.identifier != mouseInfo.touchId) 
+        return
+    }
+
     if (interObject)
       interObject.mouseUpEvent()
 
@@ -225,10 +341,15 @@ class Displayer {
    * @param {Event} e
    */
   calcMouseRay(e) {
-    let { displayType, mouseVector, appWidth, appHeight, rayCaster, camera, gameBricks, selectorBricks } = this
-      , bricks, id2obj = {}, intersects, brick, faceNorm
-    mouseVector.x = ( e.clientX / appWidth ) * 2 - 1
-    mouseVector.y = - ( e.clientY / appHeight ) * 2 + 1
+    let { displayType, mouseVector, appWidth, appHeight, rayCaster, camera, gameBricks, selectorBricks, appElem } = this
+      , relativePoint, appBound, bricks, id2obj = {}, intersects, brick, faceNorm
+    appBound = appElem.getBoundingClientRect()
+    relativePoint = {
+      x: e.clientX - appBound.x,
+      y: e.clientY - appBound.y,
+    }
+    mouseVector.x = ( relativePoint.x / appWidth ) * 2 - 1
+    mouseVector.y = - ( relativePoint.y / appHeight ) * 2 + 1
     rayCaster.setFromCamera(mouseVector, camera)
     switch (displayType) {
       case Displayer.BACKGROUND:
@@ -243,13 +364,21 @@ class Displayer {
 
     bricks.forEach(b =>
       id2obj[b.renderObject.uuid] = b)
-    intersects = rayCaster.intersectObjects(bricks.map(b =>
-      b.renderObject))
+    id2obj[this.bug.uuid] = this.bug
+    let list = bricks.map(b =>
+      b.renderObject)
+    list.push(this.bug)
+    intersects = rayCaster.intersectObjects(list)
     if (intersects.length == 0)
       return []
 
     brick = id2obj[intersects[0].object.uuid]
     faceNorm = intersects[0].face.normal
+
+    if (brick == this.bug) {
+      this.findBug()
+      return []
+    }
 
     // highlight intersected face?
     // for (let m of brick.renderObject.material)
@@ -259,8 +388,61 @@ class Displayer {
   }
 }
 
+class Displayer4BrickStyle extends Displayer {
+  constructor (appElem) {
+    super(appElem)
+    this.cameraInfo.deltaXY = function (dx, dy) {
+      let { displayer: { displayType } } = this
+      this.theta += (dy / 25)
+      this.phi += (dx / 500) * (displayType == Displayer.GAMMING || displayType == Displayer.SELECTING ? 1 : -1)
+      if (this.theta > 222)
+        this.theta = 222
+      else if (this.theta < -222)
+        this.theta = -222
+      if (this.phi > 2)
+        this.phi -= 2
+      else if (this.phi < -2)
+        this.phi += 2
+    }
+  }
+
+  applyContainer(appElem) {
+    appElem.appendChild(this.renderer.domElement)
+    this.appElem = appElem
+    this.resize()
+  }
+
+  mouseDownEvent(e) {
+    if (e.path[0] != this.domElement) 
+      return
+    else 
+      super.mouseDownEvent(e)
+  }
+
+  wheelEvent(e) {
+    if (this.mouseInfo.mouseDown) {
+      super.wheelEvent(e)
+    } else {
+      this.cameraInfo.theta += e.wheelDeltaY / 50
+      this.calcCamera()
+    }
+  }
+
+  calcCamera() {
+    let { camera, cameraInfo, pointLight } = this
+      , { r, theta, phi } = cameraInfo
+    let _ = r
+      , x = _ * Math.cos(phi * Math.PI)
+      , y = theta
+      , z = _ * Math.sin(phi * Math.PI)
+    camera.position.set(x, y, z)
+    this.camera.lookAt(0, this.camera.position.y, 0)
+    pointLight.position.setFromMatrixPosition(camera.matrix)
+  }
+}
+
 Displayer.BACKGROUND = 0
 Displayer.GAMMING = 1
 Displayer.SELECTING = 2
 
-export {Displayer};
+export {Displayer,Displayer4BrickStyle};

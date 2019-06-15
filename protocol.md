@@ -1,3 +1,5 @@
+# <center> DEPRECATED, CODE ANYWAY </center>
+
 # <center> Const </center>
 
 # <center> Class </center>
@@ -58,17 +60,20 @@
 ### Brick
 #### new Brick(app, facePattern)
   + App       app
-  + String    materialName
-  + Array     facePattern
+  + Object    facePattern
     + get top,bottom,left,right,front,back [faceId: 0-5]
-  + Array     facePatternOriginal
-    + get top,bottom,left,right,front,back [faceId: 0-5]
+  + Object    renderObject
+  + Number    mouseStartX
+  + Number    mouseStartY
+  + Number    mouseLastX
+  + Number    mouseLastY
+  + Boolean   mouseDown
+  + Boolean   disableMouse
+  + Function  rotateX()
+  + Function  rotateY()
+  + Function  rotateZ()
   + Object    orientation
     + get x,y,z [0,1,2,3]
-  + Object    rotation
-    + get set x
-    + get set y
-    + get set z
   + Function  updateFacePattern()
 
   <!-- mouse events  -->
@@ -86,11 +91,18 @@
 
 ### Game
 #### new Game(app)
-  + App       app
-  + Array     gameBricks [Brick]
-  + Number    timeCounter
-  + Number    stepCounter
-  + Function  isResolve()
+  + App          app
+  + GameBrick[]  bricks[]
+  + Number       timeCounter
+  + Number       stepCounter
+  + Function     start() - Added in 1032c93
+  + Function     pause() - Added in 1032c93
+  + Function     getTime() - Added in 1032c93
+  + Function     timePadding() - Added in 1032c93
+  + Function     getTimeFormatted() - Added in 1032c93
+  + Function     getStep() - Added in 1032c93
+  + Function     getStepFormatted() - Added in 1032c93
+  + Function     isResolve() - Added in da44d08
 
 ### App
 #### new App()
