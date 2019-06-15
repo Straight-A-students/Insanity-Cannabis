@@ -219,6 +219,12 @@ button:focus{
     border-radius:10px;
     padding: 2px;
 }
+.locked::before{
+    content: "[未解鎖] ";
+}
+.unlocked::before{
+    content: "[已解鎖] ";
+}
 #normal-area > .locked{
     background: rgb(255, 255, 255);
 }
