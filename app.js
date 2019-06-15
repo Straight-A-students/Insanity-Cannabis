@@ -617,11 +617,12 @@ class App {
     context_div.id = "about_me_context";
     gohome_btn.id = "gohome";
 
-    context_div.innerText = `團隊名稱：Straight A Students
-    成員：XMAX(劉政穎), xiplus(黃宣喻),
-    MAHADADA(曾靖維), oldA5(吳孟宇), Orcinus(蕭佳媛)
-
-    背景音樂：${this.bgm_player.getVideoData().title}
+    context_div.innerHTML = `團隊名稱：Straight A Students<br>
+    成員：XMAX(劉政穎), xiplus(黃宣喻),<br>
+    MAHADADA(曾靖維), oldA5(吳孟宇), Orcinus(蕭佳媛)<br>
+    <br>
+    背景音樂：<a href="https://youtu.be/${this.bgm_player.getVideoData().video_id}" target="_blank">${this.bgm_player.getVideoData().title}</a><br>
+    3D graph renderer powered by <a href="https://threejs.org/" target="_blank">three.js</a><br>
     `;
 
     about_me_background_div.appendChild(context_div);
