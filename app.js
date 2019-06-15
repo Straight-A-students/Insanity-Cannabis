@@ -686,7 +686,6 @@ class App {
       this.displayer.mouseInfo.mouseDown = false // will be removed
     } else {
       this.game.start()
-      alert('Not yet');
       this.displayer.mouseInfo.mouseDown = false // will be removed
     }
     this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.CHECK_ANSWER, this.game.isResolve());

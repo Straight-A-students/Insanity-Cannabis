@@ -370,6 +370,15 @@ button:focus{
     font-size: 50px;
     font-weight: bolder;
 }
+.ticket::after{
+    content: "";
+    float: right;
+    width: 40px;
+    height: 40px;
+    background: url(./icons/tickets.png) no-repeat;
+    background-size: 100% 100%;
+    border: none;
+}
 #resultBackgroundPage{
     z-index: 99;
     position: fixed;
