@@ -13,12 +13,14 @@ class AchievementManager {
     for (let event in ACHIEVEMENTEVENT) {
       this.listeners[ACHIEVEMENTEVENT[event]] = [];
     }
+    this.list = [];
   }
 
   addAchievement(achievementEntry) {
     achievementEntry.event.forEach(event => {
       this.listeners[event].push(achievementEntry);
     });
+    this.list.push(achievementEntry);
   }
 
   triggerEvent(event, value) {
@@ -41,10 +43,11 @@ class AchievementEntry {
    * @param {string} achieveTitle - 達成成就後的通知標題
    * @param {string} achieveMessage - 達成成就後的通知訊息
    */
-  constructor(app, id, event, name, achieveTitle, achieveMessage) {
+  constructor(app, id, event, type, name, achieveTitle, achieveMessage) {
     this.app = app;
     this.id = id;
     this.event = event;
+    this.type = type;
     this.name = name;
     this.achieveTitle = achieveTitle;
     this.achieveMessage = achieveMessage;

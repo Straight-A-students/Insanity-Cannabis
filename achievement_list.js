@@ -14,6 +14,7 @@ class ZeroStepPassGame extends AchievementEntry {
 			app,
 			id,
 			[ACHIEVEMENTEVENT.CHECK_ANSWER, ACHIEVEMENTEVENT.MOVE_CHANGED],
+			0,
 			'千載難逢',
 			'成就通知',
 			`千載難逢─沒有任何移動就通關`,

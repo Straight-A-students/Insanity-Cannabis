@@ -589,22 +589,26 @@ class App {
 
     document.getElementById("game").appendChild(gohome_btn);
     document.getElementById("game").appendChild(achievement_div);
+
+    this.achievementManager.list.forEach(achievement => {
+      this.insertAchievementElement(achievement.name, achievement.type, achievement.unlocked);
+    });
   }
 
   /**
    * 插入成就
    * @param {string} context
    * @param {number} type
-   * @param {flag} locked
+   * @param {flag} unlocked
    */
-  insertAchievementElement(context, type, locked) {
+  insertAchievementElement(context, type, unlocked) {
     var new_achievement_element = document.createElement("div");
     new_achievement_element.innerText = context;
 
-    if (locked) {
-      new_achievement_element.classList.add("locked");
-    } else {
+    if (unlocked) {
       new_achievement_element.classList.add("unlocked");
+    } else {
+      new_achievement_element.classList.add("locked");
     }
 
     switch (type) {
