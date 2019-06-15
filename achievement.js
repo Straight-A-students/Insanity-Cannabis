@@ -13,12 +13,14 @@ class AchievementManager {
     for (let event in ACHIEVEMENTEVENT) {
       this.listeners[ACHIEVEMENTEVENT[event]] = [];
     }
+    this.list = [];
   }
 
   addAchievement(achievementEntry) {
     achievementEntry.event.forEach(event => {
       this.listeners[event].push(achievementEntry);
     });
+    this.list.push(achievementEntry);
   }
 
   triggerEvent(event, value) {
@@ -34,12 +36,22 @@ class AchievementManager {
 class AchievementEntry {
   /**
    * 初始化成就
+   * @param {App} app - App
+   * @param {string} id - ID
+   * @param {string[]} event - 監聽事件
+   * @param {string} name - 名稱，顯示於成就頁
+   * @param {string} achieveTitle - 達成成就後的通知標題
    * @param {string} achieveMessage - 達成成就後的通知訊息
    */
-  constructor(app, event, achieveMessage) {
+  constructor(app, id, event, type, name, achieveTitle, achieveMessage) {
     this.app = app;
+    this.id = id;
     this.event = event;
+    this.type = type;
+    this.name = name;
+    this.achieveTitle = achieveTitle;
     this.achieveMessage = achieveMessage;
+    this.unlocked = false;
   }
 
   eventListener(type, value) {
@@ -47,7 +59,9 @@ class AchievementEntry {
   }
 
   achieve() {
-    this.app.showAchievement('成就通知', this.achieveMessage);
+    this.app.showAchievement(this.achieveTitle, this.achieveMessage);
+    this.unlocked = true;
+    this.app.unlockedAchievement.add(this.id);
   }
 }
 
