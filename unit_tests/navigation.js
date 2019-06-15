@@ -56,9 +56,9 @@ const printer = new Printer(outdir);
 	await page.waitFor(100)
 	await printer.writeImg(page, 'Go back to Home')
 
-	await page.click('#gotoAchievement')
+	await page.click('#showaboutme')
 	await page.waitFor(100)
-	await printer.writeImg(page, 'Go to Achievement')
+	await printer.writeImg(page, 'Go to About me')
 
 	await page.click('#gohome')
 	await page.waitFor(100)
