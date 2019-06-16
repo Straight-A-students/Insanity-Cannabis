@@ -900,7 +900,9 @@ class App {
     }
     if (data.achievementData !== undefined) {
       for (var achievementId in data.achievementData) {
-        this.achievementManager.list[achievementId].loads(data.achievementData[achievementId]);
+        if (this.achievementManager.list[achievementId] !== undefined) {
+          this.achievementManager.list[achievementId].loads(data.achievementData[achievementId]);
+        }
       }
     }
     if (data.unlockedBricks !== undefined) {
