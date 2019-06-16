@@ -501,8 +501,6 @@ class App {
           el.classList.add('face' + this.game.bricks[bid].facePattern[face]);
         });
       }
-      move_num.innerText = this.game.getStepFormatted();
-      this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.MOVE_CHANGED, this.game.getStep());
     }
 
     document.getElementById("game").appendChild(game_div);

@@ -1,4 +1,5 @@
 import { BRICKFACEKEYS } from './material.js';
+import { ACHIEVEMENTEVENT } from './achievement.js';
 
 const ARROW_INTERVAL = 50; // 箭頭刷新間隔 = 影格時長
 const ARROW_FRAMES = 20; // 箭頭轉一圈的影格數
@@ -206,8 +207,8 @@ class Brick {
     this.quaternionOriginal = this.renderObject.quaternion.clone()
   }
 
-  setMaterial (materialName = 'nope', facePattern) {
-    if (! facePattern) {
+  setMaterial(materialName = 'nope', facePattern) {
+    if (!facePattern) {
       facePattern = {}
       for (let k of BRICKFACEKEYS)
         facePattern[k] = 0
@@ -215,7 +216,7 @@ class Brick {
 
     this.materialName = materialName
     let textures = this.app.materialManager.get(materialName)
-      , material = BRICKFACEKEYS.map(k => 
+      , material = BRICKFACEKEYS.map(k =>
         new THREE.MeshPhongMaterial({
           map: textures[facePattern[k]],
           transparent: true,
@@ -490,6 +491,7 @@ class GameBrick extends Brick {
     this.app.draw()
     this.app.game.stepCounter++;
     this.app.updateMove();
+    this.app.achievementManager.triggerEvent(ACHIEVEMENTEVENT.MOVE_CHANGED, this.app.game.getStep());
   }
 
   rotateY(angle) {
@@ -497,6 +499,7 @@ class GameBrick extends Brick {
     this.app.draw()
     this.app.game.stepCounter++;
     this.app.updateMove();
+    this.app.achievementManager.triggerEvent(ACHIEVEMENTEVENT.MOVE_CHANGED, this.app.game.getStep());
   }
 
   rotateZ(angle) {
@@ -504,6 +507,7 @@ class GameBrick extends Brick {
     this.app.draw()
     this.app.game.stepCounter++;
     this.app.updateMove();
+    this.app.achievementManager.triggerEvent(ACHIEVEMENTEVENT.MOVE_CHANGED, this.app.game.getStep());
   }
 }
 
@@ -521,19 +525,19 @@ class SelectorBrick extends Brick {
     this.disable()
   }
 
-  enable () {
+  enable() {
     this.unlocked = true
     this.setMaterial(this.label, SelectorBrick.facePattern)
   }
 
-  disable () {
+  disable() {
     this.unlocked = false
     this.setMaterial('nope')
   }
 
   mouseUpEvent() {
     super.mouseUpEvent()
-    if (! this.unlocked) {
+    if (!this.unlocked) {
       return
     }
 
