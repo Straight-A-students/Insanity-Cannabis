@@ -41,7 +41,6 @@ const printer = new Printer(outdir, headless);
 	const positionZ = 600;
 	const positionY = [190, 290, 370, 430];
 	const waitRotate = 5;
-	const waitStep = 10;
 
 	for (let playCount = 1; playCount <= 25; playCount++) {
 		console.log('Game start', playCount);
@@ -104,8 +103,6 @@ const printer = new Printer(outdir, headless);
 					}
 					await page.mouse.up();
 			}
-
-			await page.waitFor(waitStep);
 
 			answer = await page.evaluate(() => app.game.getAnswer());
 		}
