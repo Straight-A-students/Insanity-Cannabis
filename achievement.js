@@ -1,7 +1,7 @@
 const ACHIEVEMENTEVENT = {
-  MOVE_CHANGED: 1,
-  ROTATE_BRICK: 2,
-  CHECK_ANSWER: 3,
+  MOVE_CHANGED: 'move_changed',
+  ROTATE_BRICK: 'rotate_brick',
+  CHECK_ANSWER: 'check_answer',
 }
 
 const ACHIEVEMENTTYPE = {
