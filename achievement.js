@@ -63,6 +63,9 @@ class AchievementEntry {
     this.app.showAchievement(this.achieveTitle, this.achieveMessage);
     this.unlocked = true;
     this.app.unlockedAchievement.add(this.id);
+    if (this.ticket) {
+      this.app.unlockRandomBrick();
+    }
   }
 }
 

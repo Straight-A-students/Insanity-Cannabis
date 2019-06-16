@@ -189,7 +189,7 @@ class App {
 
   unlockRandomBrick() {
     let list = this.materialManager.brickStyles.filter(n =>
-      ! this.unlockedBricks.has(n))
+      !this.unlockedBricks.has(n))
     if (list.length == 0)
       return
 
@@ -198,6 +198,7 @@ class App {
     this.displayer4BrickStyle.selectorBricks.find(b =>
       b.label == label)
       .enable()
+    this.showAchievement('獲得方塊', '請到設定頁查看新的方塊');
   }
 
   // Home page
