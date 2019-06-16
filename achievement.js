@@ -4,6 +4,12 @@ const ACHIEVEMENTEVENT = {
   CHECK_ANSWER: 3,
 }
 
+const ACHIEVEMENTTYPE = {
+  NORMAL: 0,
+  SPECIAL: 1,
+  HIDDEN: 2,
+}
+
 /**
  * 成就管理器
  */
@@ -70,4 +76,4 @@ class AchievementEntry {
   }
 }
 
-export { AchievementManager, AchievementEntry, ACHIEVEMENTEVENT }
+export { AchievementManager, AchievementEntry, ACHIEVEMENTEVENT, ACHIEVEMENTTYPE }

@@ -1,4 +1,4 @@
-import { ACHIEVEMENTEVENT, AchievementEntry } from './achievement.js';
+import { ACHIEVEMENTEVENT, ACHIEVEMENTTYPE, AchievementEntry } from './achievement.js';
 
 /**
  * 零步通關
@@ -14,7 +14,7 @@ class ZeroStepPassGame extends AchievementEntry {
 			app,
 			id,
 			[ACHIEVEMENTEVENT.CHECK_ANSWER, ACHIEVEMENTEVENT.MOVE_CHANGED],
-			0,
+			ACHIEVEMENTTYPE.NORMAL,
 			'千載難逢',
 			'成就通知',
 			`千載難逢─沒有任何移動就通關`,

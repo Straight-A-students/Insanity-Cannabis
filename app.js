@@ -2,7 +2,7 @@ import { Game } from './game.js';
 import { Displayer, Displayer4BrickStyle } from './displayer.js';
 import { SelectorBrick } from './brick.js';
 import { MaterialManager } from './material.js';
-import { AchievementManager, ACHIEVEMENTEVENT } from './achievement.js';
+import { AchievementManager, ACHIEVEMENTEVENT, ACHIEVEMENTTYPE } from './achievement.js';
 import { ZeroStepPassGame } from './achievement_list.js';
 
 
@@ -624,9 +624,15 @@ class App {
     }
 
     switch (type) {
-      case 0: document.getElementById("normal-area").appendChild(new_achievement_element); break;
-      case 1: document.getElementById("special-area").appendChild(new_achievement_element); break;
-      case 2: document.getElementById("hide-area").appendChild(new_achievement_element); break;
+      case ACHIEVEMENTTYPE.NORMAL:
+        document.getElementById("normal-area").appendChild(new_achievement_element);
+        break;
+      case ACHIEVEMENTTYPE.SPECIAL:
+        document.getElementById("special-area").appendChild(new_achievement_element);
+        break;
+      case ACHIEVEMENTTYPE.HIDDEN:
+        document.getElementById("hide-area").appendChild(new_achievement_element);
+        break;
     }
   }
 
