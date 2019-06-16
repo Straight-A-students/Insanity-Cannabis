@@ -172,9 +172,46 @@ class PassGameRecord extends AchievementEntry {
 	}
 }
 
+/**
+* 在X秒內通關
+*/
+class QuickPass extends AchievementEntry {
+  /**
+   * @param {App} app - App
+   * @param {number} id - ID
+   * @param {number} name_suffix - 名稱後綴
+   * @param {number} time - 在X秒內
+   */
+	constructor(app, id, name_suffix, time) {
+		super(
+			app,
+			id,
+			[
+				ACHIEVEMENTEVENT.CHECK_ANSWER,
+			],
+			ACHIEVEMENTTYPE.NORMAL,
+			`慧心巧手-${name_suffix}`,
+			'成就通知',
+			`慧心巧手─在${time}秒內通關`,
+			true,
+		);
+		this.time = time;
+	}
+
+	eventListener(type, value) {
+		if (this.unlocked) { // trigger only once
+			return;
+		}
+		if (type == ACHIEVEMENTEVENT.CHECK_ANSWER && value && this.app.game.getTime() < this.time) {
+			this.achieve();
+		}
+	}
+}
+
 export {
 	ZeroStepPassGame,
 	GiveupRecord,
 	ContinuousSubmit,
 	PassGameRecord,
+	QuickPass,
 }

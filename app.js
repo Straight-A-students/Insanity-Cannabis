@@ -3,7 +3,13 @@ import { Displayer, Displayer4BrickStyle } from './displayer.js';
 import { SelectorBrick } from './brick.js';
 import { MaterialManager } from './material.js';
 import { AchievementManager, ACHIEVEMENTEVENT, ACHIEVEMENTTYPE } from './achievement.js';
-import { ZeroStepPassGame, GiveupRecord, ContinuousSubmit, PassGameRecord } from './achievement_list.js';
+import {
+  ZeroStepPassGame,
+  GiveupRecord,
+  ContinuousSubmit,
+  PassGameRecord,
+  QuickPass,
+} from './achievement_list.js';
 
 
 const STORAGEKEY = 'InsanityCannabisData';
@@ -152,6 +158,12 @@ class App {
     this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-3', '3', 15));
     this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-4', '4', 20));
     this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-5', '5', 25));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-1', '1', 600));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-2', '2', 300));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-3', '3', 180));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-4', '4', 60));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-5', '5', 30));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-6', '6', 10));
 
     this.displayer = new Displayer(document.getElementById('render'));
     this.displayer4BrickStyle = new Displayer4BrickStyle(null);
