@@ -344,7 +344,10 @@ class App {
     tip_btn.onclick = () => { this.tip(); };
     continue_btn.onclick = () => { this.continue(); };
     restart_btn.onclick = () => { this.restart(); };
-    exit_btn.onclick = () => { this.exit(); };
+    exit_btn.onclick = () => {
+      this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.GIVEUP, null);
+      this.exit();
+    };
     volume_ipt.oninput = () => {
       this.setVolume(volume_ipt.value);
     };
@@ -772,7 +775,6 @@ class App {
    * 結束遊戲
    */
   exit() {
-    this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.GIVEUP, null);
     this.gotoHome();
     this.inGame = false;
     this.storeData();
