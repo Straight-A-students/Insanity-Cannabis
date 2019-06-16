@@ -12,7 +12,7 @@ var args = parser.parseArgs();
 console.log(args);
 
 const headless = args.headless;
-const outdir = __dirname + '/output/play/';
+const outdir = __dirname + '/output/ach_pass_game/';
 const printer = new Printer(outdir, headless);
 
 (async () => {
