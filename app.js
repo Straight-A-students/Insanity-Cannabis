@@ -140,9 +140,6 @@ class App {
       ]
     )
 
-    this.achievementManager = new AchievementManager();
-    this.achievementManager.addAchievement(new ZeroStepPassGame(this, 'zero-pass-game'));
-
     this.displayer = new Displayer(document.getElementById('render'));
     this.displayer4BrickStyle = new Displayer4BrickStyle(null);
     this.brickCount = 4;
@@ -164,6 +161,9 @@ class App {
     this.noticeIsBusy = false;
     this.gotoHome();
     this.loadData();
+
+    this.achievementManager = new AchievementManager();
+    this.achievementManager.addAchievement(new ZeroStepPassGame(this, 'zero-pass-game'));
 
     window.onbeforeunload = () => {
       this.storeData();
@@ -865,6 +865,7 @@ class App {
     if (this.inGame) {
       data.game = this.game.dumps();
     }
+    data.unlockedAchievement = [...this.unlockedAchievement.values()];
     localStorage.setItem(STORAGEKEY, JSON.stringify(data));
   }
 
@@ -896,6 +897,9 @@ class App {
         this.start();
         this.game.loads(data.game);
       }
+    }
+    if (data.unlockedAchievement !== undefined) {
+      this.unlockedAchievement = new Set(data.unlockedAchievement);
     }
   }
 

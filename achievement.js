@@ -52,7 +52,7 @@ class AchievementEntry {
     this.achieveTitle = achieveTitle;
     this.achieveMessage = achieveMessage;
     this.ticket = ticket;
-    this.unlocked = false;
+    this.unlocked = app.unlockedAchievement.has(id);
   }
 
   eventListener(type, value) {
@@ -66,6 +66,7 @@ class AchievementEntry {
     if (this.ticket) {
       this.app.unlockRandomBrick();
     }
+    this.app.storeData();
   }
 }
 
