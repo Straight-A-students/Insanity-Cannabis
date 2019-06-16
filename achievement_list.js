@@ -6,15 +6,14 @@ import { ACHIEVEMENTEVENT, ACHIEVEMENTTYPE, AchievementEntry } from './achieveme
 class ZeroStepPassGame extends AchievementEntry {
   /**
    * @param {App} app - App
-   * @param {number} time - 在X秒內
-   * @param {number} move - 轉動次數
+   * @param {number} id - ID
    */
 	constructor(app, id) {
 		super(
 			app,
 			id,
 			[ACHIEVEMENTEVENT.CHECK_ANSWER, ACHIEVEMENTEVENT.MOVE_CHANGED],
-			ACHIEVEMENTTYPE.NORMAL,
+			ACHIEVEMENTTYPE.SPECIAL,
 			'千載難逢',
 			'成就通知',
 			`千載難逢─沒有任何移動就通關`,
