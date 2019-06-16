@@ -251,7 +251,7 @@ button:focus{
     padding: 2px;
 }
 #hide-area > .locked{
-    background: rgb(255, 255, 255);
+    display: none;
 }
 #hide-area > .unlocked{
     color: white;
