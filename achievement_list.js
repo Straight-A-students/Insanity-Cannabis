@@ -58,7 +58,7 @@ class GiveupRecord extends AchievementEntry {
    * @param {number} name_suffix - 名稱後綴
    * @param {number} target - 放棄次數
    */
-	constructor(app, id, name_suffix, target) {
+	constructor(app, id, name_suffix, target, has_ticket) {
 		super(
 			app,
 			id,
@@ -67,7 +67,7 @@ class GiveupRecord extends AchievementEntry {
 			`前功盡棄-${name_suffix}`,
 			'成就通知',
 			`前功盡棄─放棄遊戲${target}次`,
-			true,
+			has_ticket,
 		);
 		this.target = target;
 		this.data = {

@@ -149,22 +149,20 @@ class App {
 
     this.achievementManager = new AchievementManager();
     this.achievementManager.addAchievement(new ZeroStepPassGame(this, 'zero-pass-game'));
-    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-1', '1', 1));
-    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-2', '2', 10));
-    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-3', '3', 15));
-    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-4', '4', 20));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-1', '1', 1, false));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-2', '2', 10, true));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-3', '3', 15, true));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-4', '4', 20, true));
     this.achievementManager.addAchievement(new ContinuousSubmit(this, 'continuous-submit', 5));
     this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-1', '1', 3));
     this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-2', '2', 10));
     this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-3', '3', 15));
     this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-4', '4', 20));
     this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-5', '5', 25));
-    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-1', '1', 600));
-    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-2', '2', 300));
-    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-3', '3', 180));
-    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-4', '4', 60));
-    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-5', '5', 30));
-    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-6', '6', 10));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-1', '1', 180));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-2', '2', 60));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-3', '3', 30));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-4', '4', 10));
     this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-1', '1', 2));
     this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-2', '2', 3));
     this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-3', '3', 4));
@@ -887,7 +885,9 @@ class App {
     if (data.unlockedAchievement !== undefined) {
       this.unlockedAchievement = new Set(data.unlockedAchievement);
       data.unlockedAchievement.forEach(achievementId => {
-        this.achievementManager.list[achievementId].unlocked = true;
+        if (this.achievementManager.list[achievementId] !== undefined) {
+          this.achievementManager.list[achievementId].unlocked = true;
+        }
       });
     }
     if (data.achievementData !== undefined) {
