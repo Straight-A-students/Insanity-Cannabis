@@ -161,8 +161,7 @@ class App {
     this.unlockedAchievement = new Set([]);
     this.brickStyles = this.materialManager.brickStyles.map(n =>
       new SelectorBrick(this, n))
-    this.brickStyles.forEach(b =>
-      this.unlockedBricks.has(b.label) && b.enable())
+    this.updateUnlockedBricks();
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
     this.changeBackground()
     this.noticeStack = [];
@@ -204,6 +203,11 @@ class App {
       b.label == label)
       .enable()
     this.showAchievement('獲得方塊', '請到設定頁查看新的方塊');
+  }
+
+  updateUnlockedBricks() {
+    this.brickStyles.forEach(b =>
+      this.unlockedBricks.has(b.label) && b.enable())
   }
 
   // Home page
@@ -822,6 +826,7 @@ class App {
     for (var achievementId in this.achievementManager.list) {
       data.achievementData[achievementId] = this.achievementManager.list[achievementId].dumps();
     }
+    data.unlockedBricks = [...this.unlockedBricks];
     localStorage.setItem(STORAGEKEY, JSON.stringify(data));
   }
 
@@ -864,6 +869,10 @@ class App {
       for (var achievementId in data.achievementData) {
         this.achievementManager.list[achievementId].loads(data.achievementData[achievementId]);
       }
+    }
+    if (data.unlockedBricks !== undefined) {
+      this.unlockedBricks = new Set(data.unlockedBricks);
+      this.updateUnlockedBricks();
     }
   }
 
