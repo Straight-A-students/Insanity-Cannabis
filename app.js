@@ -187,7 +187,13 @@ class App {
     this.displayer4BrickStyle.calcCamera()
   }
 
-  unlockBrick(label) {
+  unlockRandomBrick() {
+    let list = this.materialManager.brickStyles.filter(n =>
+      ! this.unlockedBricks.has(n))
+    if (list.length == 0)
+      return
+
+    let label = list[Math.floor(Math.random() * list.length)]
     this.unlockedBricks.add(label)
     this.displayer4BrickStyle.selectorBricks.find(b =>
       b.label == label)
