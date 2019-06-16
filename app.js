@@ -595,6 +595,7 @@ class App {
     // hide_locked_div.innerText = "隱藏成就 未解鎖";
 
     normal_unlocked_div.classList.add("unlocked");
+    normal_unlocked_div.classList.add("ticket"); // Temp
     normal_locked_div.classList.add("locked");
     special_unlocked_div.classList.add("unlocked");
     special_locked_div.classList.add("locked");
@@ -672,7 +673,6 @@ class App {
       this.displayer.mouseInfo.mouseDown = false // will be removed
     } else {
       this.game.start()
-      alert('Not yet');
       this.displayer.mouseInfo.mouseDown = false // will be removed
     }
   }
