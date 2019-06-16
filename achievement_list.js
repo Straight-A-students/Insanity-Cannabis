@@ -132,8 +132,49 @@ class ContinuousSubmit extends AchievementEntry {
 	}
 }
 
+/**
+ * 欲罷不能
+ */
+class PassGameRecord extends AchievementEntry {
+  /**
+   * @param {App} app - App
+   * @param {number} id - ID
+   * @param {number} name_suffix - 名稱後綴
+   * @param {number} target - 放棄次數
+   */
+	constructor(app, id, name_suffix, target) {
+		super(
+			app,
+			id,
+			[ACHIEVEMENTEVENT.CHECK_ANSWER],
+			ACHIEVEMENTTYPE.NORMAL,
+			`欲罷不能-${name_suffix}`,
+			'成就通知',
+			`欲罷不能─通關${target}次`,
+			true,
+		);
+		this.target = target;
+		this.data = {
+			pass_count: 0,
+		};
+	}
+
+	eventListener(type, value) {
+		if (this.unlocked) { // trigger only once
+			return;
+		}
+		if (type == ACHIEVEMENTEVENT.CHECK_ANSWER && value) {
+			this.data.pass_count++;
+			if (this.data.pass_count == this.target) {
+				this.achieve();
+			}
+		}
+	}
+}
+
 export {
 	ZeroStepPassGame,
 	GiveupRecord,
 	ContinuousSubmit,
+	PassGameRecord,
 }
