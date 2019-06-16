@@ -340,26 +340,27 @@ button:focus{
 }
 #noticeWindow{
     width: 300px;
-    height: 100px;
+    height: 140px;
     background: rgba(255, 255, 255, 0.9);
     /* border: 2px black solid; */
     border-radius:10px;
     position: absolute;
-    top: -100px;
-    margin: 0px -150px;
+    top: -140px;
+    margin: 0px -140px;
+    padding: 10px;
     left: 50%;
     animation-name:slide;
     animation-duration:3s;
 }
 @keyframes slide{
     0%{
-        top: -100px;
+        top: -140px;
     }
     40%, 60%{
         top: -5px;
     }
     100%{
-        top: -100px;
+        top: -140px;
     }
 }
 #noticeWindow > div{
