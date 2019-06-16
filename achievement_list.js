@@ -12,14 +12,21 @@ class ZeroStepPassGame extends AchievementEntry {
 		super(
 			app,
 			id,
-			[ACHIEVEMENTEVENT.CHECK_ANSWER, ACHIEVEMENTEVENT.MOVE_CHANGED],
+			[
+				ACHIEVEMENTEVENT.CHECK_ANSWER,
+				ACHIEVEMENTEVENT.MOVE_CHANGED,
+				ACHIEVEMENTEVENT.RESTART_GAME,
+				ACHIEVEMENTEVENT.GIVEUP
+			],
 			ACHIEVEMENTTYPE.SPECIAL,
 			'千載難逢',
 			'成就通知',
 			`千載難逢─沒有任何移動就通關`,
 			true,
 		);
-		this.move = 0;
+		this.data = {
+			move: 0,
+		};
 	}
 
 	eventListener(type, value) {
@@ -27,11 +34,16 @@ class ZeroStepPassGame extends AchievementEntry {
 			return;
 		}
 		if (type == ACHIEVEMENTEVENT.MOVE_CHANGED) {
-			this.count++;
+			this.data.move++;
 		} else if (type == ACHIEVEMENTEVENT.CHECK_ANSWER) {
 			if (value) {
-				this.achieve();
+				if (this.data.move == 0) {
+					this.achieve();
+				}
+				this.data.move = 0;
 			}
+		} else if ([ACHIEVEMENTEVENT.RESTART_GAME, ACHIEVEMENTEVENT.GIVEUP].includes(type)) {
+			this.data.move = 0;
 		}
 	}
 }
