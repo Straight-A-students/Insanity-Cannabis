@@ -209,6 +209,8 @@ button:focus{
 #achievement{
     margin: 0px auto;
     width: 60%;
+    height: 100%;
+    overflow: auto;
 }
 #achievement > div{
     margin: 10px 0;
