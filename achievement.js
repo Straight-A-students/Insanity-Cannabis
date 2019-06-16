@@ -2,6 +2,8 @@ const ACHIEVEMENTEVENT = {
   MOVE_CHANGED: 'move_changed',
   ROTATE_BRICK: 'rotate_brick',
   CHECK_ANSWER: 'check_answer',
+  RESTART_GAME: 'restart_game',
+  GIVEUP: 'giveup',
 }
 
 const ACHIEVEMENTTYPE = {

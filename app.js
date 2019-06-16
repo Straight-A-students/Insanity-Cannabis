@@ -142,6 +142,10 @@ class App {
 
     this.achievementManager = new AchievementManager();
     this.achievementManager.addAchievement(new ZeroStepPassGame(this, 'zero-pass-game'));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-1', '1', 1));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-2', '2', 10));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-3', '3', 15));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-4', '4', 20));
 
     this.displayer = new Displayer(document.getElementById('render'));
     this.displayer4BrickStyle = new Displayer4BrickStyle(null);
@@ -697,6 +701,7 @@ class App {
    * 重新開始遊戲
    */
   restart() {
+    this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.RESTART_GAME, null);
     this.game.restart();
     document.getElementById('pauseBackgroundPage').style.display = 'none';
     document.getElementById('resultBackgroundPage').style.display = 'none';
@@ -731,6 +736,7 @@ class App {
    * 結束遊戲
    */
   exit() {
+    this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.GIVEUP, null);
     this.gotoHome();
     this.inGame = false;
     this.storeData();
