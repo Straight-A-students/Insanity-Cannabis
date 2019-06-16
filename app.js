@@ -445,66 +445,6 @@ class App {
     this.timeInt = setInterval(() => {
       time_num.innerText = Math.floor(this.game.getTime());
     }, 100);
-
-    let game_div = document.createElement('div');
-    game_div.style = 'position: absolute; top: 5%; left: 10%; background: rgba(128, 128, 128, 0.5); display: none;';
-
-    let brick_table = document.createElement('table');
-
-    let createBrick = (brickId, face) => {
-      let brick = document.createElement('div');
-      brick.id = 'brick' + brickId + face;
-      if (face == 'top' || face == 'bottom') {
-        brick.className = 'facetop';
-      } else {
-        brick.className = 'faceside';
-      }
-      return brick;
-    }
-
-    for (let brickId = 0; brickId < this.brickCount; brickId++) {
-      // top
-      let tr_top = document.createElement('tr');
-      let td_top = document.createElement('td');
-      td_top.colSpan = 4;
-      td_top.style = 'text-align: center;';
-      td_top.appendChild(createBrick(brickId, 'top'));
-      tr_top.appendChild(td_top);
-      brick_table.appendChild(tr_top);
-      // side
-      let tr_side = document.createElement('tr');
-      ['left', 'front', 'right', 'back'].forEach(face => {
-        let td_side = document.createElement('td');
-        td_side.appendChild(createBrick(brickId, face));
-        tr_side.appendChild(td_side);
-      });
-      brick_table.appendChild(tr_side);
-      // bottom
-      let tr_bottom = document.createElement('tr');
-      let td_bottom = document.createElement('td');
-      td_bottom.colSpan = 4;
-      td_bottom.style = 'text-align: center;';
-      td_bottom.appendChild(createBrick(brickId, 'bottom'));
-      tr_bottom.appendChild(td_bottom);
-      brick_table.appendChild(tr_bottom);
-    }
-
-    game_div.appendChild(brick_table);
-
-    this.draw = () => {
-      for (let bid = 0; bid < this.brickCount; bid++) {
-        ['front', 'back', 'left', 'right', 'top', 'bottom'].forEach(face => {
-          const el = document.getElementById('brick' + bid + face);
-          for (let bid2 = 1; bid2 <= this.brickCount; bid2++) {
-            el.classList.remove('face' + bid2);
-          }
-          el.classList.add('face' + this.game.bricks[bid].facePattern[face]);
-        });
-      }
-    }
-
-    document.getElementById("game").appendChild(game_div);
-    this.draw();
   }
 
   updateMove() {

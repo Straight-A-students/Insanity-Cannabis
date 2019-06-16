@@ -488,7 +488,6 @@ class GameBrick extends Brick {
 
   rotateX(angle) {
     super.rotateX(angle)
-    this.app.draw()
     this.app.game.stepCounter++;
     this.app.updateMove();
     this.app.achievementManager.triggerEvent(ACHIEVEMENTEVENT.MOVE_CHANGED, this.app.game.getStep());
@@ -496,7 +495,6 @@ class GameBrick extends Brick {
 
   rotateY(angle) {
     super.rotateY(angle)
-    this.app.draw()
     this.app.game.stepCounter++;
     this.app.updateMove();
     this.app.achievementManager.triggerEvent(ACHIEVEMENTEVENT.MOVE_CHANGED, this.app.game.getStep());
@@ -504,7 +502,6 @@ class GameBrick extends Brick {
 
   rotateZ(angle) {
     super.rotateZ(angle)
-    this.app.draw()
     this.app.game.stepCounter++;
     this.app.updateMove();
     this.app.achievementManager.triggerEvent(ACHIEVEMENTEVENT.MOVE_CHANGED, this.app.game.getStep());
