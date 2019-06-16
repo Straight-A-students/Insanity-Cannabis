@@ -351,6 +351,7 @@ button:focus{
     margin: 0px -140px;
     padding: 10px;
     left: 50%;
+    z-index: 999;
     animation-name:slide;
     animation-duration:3s;
 }
