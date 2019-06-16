@@ -146,8 +146,7 @@ class App {
     this.inGame = false;
     this.brickStyles = this.materialManager.brickStyles.map(n =>
       new SelectorBrick(this, n))
-    this.brickStyles.forEach(b =>
-      this.unlockedBricks.has(b.label) && b.enable())
+    this.updateUnlockedBricks();
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
     this.changeBackground()
     this.gotoHome();
@@ -186,6 +185,11 @@ class App {
     this.displayer4BrickStyle.selectorBricks.find(b =>
       b.label == label)
     .enable()
+  }
+
+  updateUnlockedBricks() {
+    this.brickStyles.forEach(b =>
+      this.unlockedBricks.has(b.label) && b.enable())
   }
 
   // Home page
@@ -849,6 +853,7 @@ class App {
     if (this.inGame) {
       data.game = this.game.dumps();
     }
+    data.unlockedBricks = [...this.unlockedBricks];
     localStorage.setItem(STORAGEKEY, JSON.stringify(data));
   }
 
@@ -880,6 +885,10 @@ class App {
         this.start();
         this.game.loads(data.game);
       }
+    }
+    if (data.unlockedBricks !== undefined) {
+      this.unlockedBricks = new Set(data.unlockedBricks);
+      this.updateUnlockedBricks();
     }
   }
 }
