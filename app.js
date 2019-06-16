@@ -569,7 +569,7 @@ class App {
 
     for (var achievementId in this.achievementManager.list) {
       let achievement = this.achievementManager.list[achievementId];
-      this.insertAchievementElement(achievement.name, achievement.type, achievement.unlocked, achievement.ticket);
+      this.insertAchievementElement(achievement.name, achievement.achieveMessage, achievement.type, achievement.unlocked, achievement.ticket);
     }
   }
 
@@ -580,28 +580,36 @@ class App {
    * @param {flag} unlocked
    * @param {flag} ticket
    */
-  insertAchievementElement(context, type, unlocked, ticket) {
+  insertAchievementElement(achieveTitle, achieveMessage, type, unlocked, ticket) {
     var new_achievement_element = document.createElement("div");
-    new_achievement_element.innerText = context;
+    new_achievement_element.innerText = achieveTitle;
+    var title_unblocked = '';
+    var title_ticket = '';
 
     if (unlocked) {
       new_achievement_element.classList.add("unlocked");
+      title_unblocked = '[已解鎖]';
     } else {
       new_achievement_element.classList.add("locked");
+      title_unblocked = '[未解鎖]';
     }
 
     if (ticket) {
       new_achievement_element.classList.add("ticket");
+      title_ticket = '（有方塊獎勵）';
     }
 
     switch (type) {
       case ACHIEVEMENTTYPE.NORMAL:
+        new_achievement_element.title = title_unblocked + '[一般成就] ' + achieveMessage + title_ticket;
         document.getElementById("normal-area").appendChild(new_achievement_element);
         break;
       case ACHIEVEMENTTYPE.SPECIAL:
+        new_achievement_element.title = title_unblocked + '[特殊成就] ' + achieveMessage + title_ticket;
         document.getElementById("special-area").appendChild(new_achievement_element);
         break;
       case ACHIEVEMENTTYPE.HIDDEN:
+        new_achievement_element.title = title_unblocked + '[隱藏成就] ' + achieveMessage + title_ticket;
         document.getElementById("hide-area").appendChild(new_achievement_element);
         break;
     }
