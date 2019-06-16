@@ -220,10 +220,47 @@ class QuickPass extends AchievementEntry {
 	}
 }
 
+/**
+* 在X秒內通關
+*/
+class FirstPass extends AchievementEntry {
+  /**
+   * @param {App} app - App
+   * @param {number} id - ID
+   * @param {number} name_suffix - 名稱後綴
+   * @param {number} brick_count - 方塊個數
+   */
+	constructor(app, id, name_suffix, brick_count) {
+		super(
+			app,
+			id,
+			[
+				ACHIEVEMENTEVENT.CHECK_ANSWER,
+			],
+			ACHIEVEMENTTYPE.NORMAL,
+			`首次通關-${name_suffix}`,
+			'成就通知',
+			`首次通關─通關${brick_count}個方塊`,
+			true,
+		);
+		this.brick_count = brick_count;
+	}
+
+	eventListener(type, value) {
+		if (this.unlocked) { // trigger only once
+			return;
+		}
+		if (type == ACHIEVEMENTEVENT.CHECK_ANSWER && value && this.app.brickCount == this.brick_count) {
+			this.achieve();
+		}
+	}
+}
+
 export {
 	ZeroStepPassGame,
 	GiveupRecord,
 	ContinuousSubmit,
 	PassGameRecord,
 	QuickPass,
+	FirstPass,
 }

@@ -9,6 +9,7 @@ import {
   ContinuousSubmit,
   PassGameRecord,
   QuickPass,
+  FirstPass,
 } from './achievement_list.js';
 
 
@@ -164,6 +165,13 @@ class App {
     this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-4', '4', 60));
     this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-5', '5', 30));
     this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-6', '6', 10));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-1', '1', 2));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-2', '2', 3));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-3', '3', 4));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-4', '4', 5));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-5', '5', 6));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-6', '6', 7));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-7', '7', 8));
 
     this.displayer = new Displayer(document.getElementById('render'));
     this.displayer4BrickStyle = new Displayer4BrickStyle(null);
