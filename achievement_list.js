@@ -82,4 +82,58 @@ class GiveupRecord extends AchievementEntry {
 	}
 }
 
-export { ZeroStepPassGame, GiveupRecord }
+/**
+* 在沒有轉動下連續按送出X次發出通知
+*/
+class ContinuousSubmit extends AchievementEntry {
+  /**
+   * @param {App} app - App
+   * @param {number} target - 連續點擊的次數
+   */
+	constructor(app, id, target) {
+		super(
+			app,
+			id,
+			[
+				ACHIEVEMENTEVENT.CHECK_ANSWER,
+				ACHIEVEMENTEVENT.MOVE_CHANGED,
+				ACHIEVEMENTEVENT.RESTART_GAME,
+				ACHIEVEMENTEVENT.GIVEUP
+			],
+			ACHIEVEMENTTYPE.HIDDEN,
+			`躍躍欲試`,
+			'成就通知',
+			`躍躍欲試─連續送出答案${target}次`,
+			true,
+		);
+		this.target = target;
+		this.data = {
+			count: 0,
+		};
+	}
+
+	eventListener(type, value) {
+		if (this.unlocked) { // trigger only once
+			return;
+		}
+		if ([ACHIEVEMENTEVENT.MOVE_CHANGED, ACHIEVEMENTEVENT.RESTART_GAME, ACHIEVEMENTEVENT.GIVEUP].includes(type)) {
+			this.data.count = 0;
+		} else if (type == ACHIEVEMENTEVENT.CHECK_ANSWER) {
+			if (value) {
+				this.data.count = 0;
+				return;
+			}
+			this.data.count++;
+			if (this.data.count == this.target) {
+				this.data.count = 0;
+				this.achieve();
+			}
+		}
+	}
+}
+
+export {
+	ZeroStepPassGame,
+	GiveupRecord,
+	ContinuousSubmit,
+}

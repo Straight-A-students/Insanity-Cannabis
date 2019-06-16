@@ -3,7 +3,7 @@ import { Displayer, Displayer4BrickStyle } from './displayer.js';
 import { SelectorBrick } from './brick.js';
 import { MaterialManager } from './material.js';
 import { AchievementManager, ACHIEVEMENTEVENT, ACHIEVEMENTTYPE } from './achievement.js';
-import { ZeroStepPassGame, GiveupRecord } from './achievement_list.js';
+import { ZeroStepPassGame, GiveupRecord, ContinuousSubmit } from './achievement_list.js';
 
 
 const STORAGEKEY = 'InsanityCannabisData';
@@ -146,6 +146,7 @@ class App {
     this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-2', '2', 10));
     this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-3', '3', 15));
     this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-4', '4', 20));
+    this.achievementManager.addAchievement(new ContinuousSubmit(this, 'continuous-submit', 5));
 
     this.displayer = new Displayer(document.getElementById('render'));
     this.displayer4BrickStyle = new Displayer4BrickStyle(null);
