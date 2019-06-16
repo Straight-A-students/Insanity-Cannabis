@@ -129,7 +129,7 @@ class App {
           label: '21',
           length: 9,
         }, {
-          type: MaterialManager.OTHER, 
+          type: MaterialManager.OTHER,
           label: 'nope',
           length: 1,
         },
@@ -144,9 +144,9 @@ class App {
     this.volume = 75;
     this.bgm_player = bgm_player;
     this.inGame = false;
-    this.brickStyles = this.materialManager.brickStyles.map(n => 
+    this.brickStyles = this.materialManager.brickStyles.map(n =>
       new SelectorBrick(this, n))
-    this.brickStyles.forEach(b => 
+    this.brickStyles.forEach(b =>
       this.unlockedBricks.has(b.label) && b.enable())
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
     this.changeBackground()
@@ -168,16 +168,16 @@ class App {
     this.displayer4BrickStyle.applyContainer(appElem)
     this.displayer4BrickStyle.resize()
     Object.assign(this.displayer4BrickStyle.cameraInfo, {
-      r: 10, 
-      theta: this.displayer4BrickStyle.selectorBrickStartY, 
-      phi: -.5, 
+      r: 10,
+      theta: this.displayer4BrickStyle.selectorBrickStartY,
+      phi: -.5,
     })
     this.displayer4BrickStyle.calcCamera()
   }
 
   unlockBrick(label) {
     this.unlockedBricks.add(label)
-    this.displayer4BrickStyle.selectorBricks.find(b => 
+    this.displayer4BrickStyle.selectorBricks.find(b =>
       b.label == label)
     .enable()
   }
@@ -339,7 +339,7 @@ class App {
     resultPage_time_num.id = "resultPage_time_num";
     resultPage_move_div.id = "resultPage_move";
     resultPage_move_lb.id = "resultPage_move_lb";
-    resultPage_move_num.id = "resultPage_move_lb";    
+    resultPage_move_num.id = "resultPage_move_lb";
     resultPage_restart_btn.id = "resultPage_restart";
     resultPage_next_btn.id = "resultPage_next";
     resultPage_home_btn.id = "resultPage_home";
@@ -662,7 +662,7 @@ class App {
     }
 
     this.game.pause()
-    this.displayer.submitAnimate(this.game.isResolve(), () => 
+    this.displayer.submitAnimate(this.game.isResolve(), () =>
       this.afterSubmitAnim())
   }
 

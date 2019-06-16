@@ -1,8 +1,13 @@
 sudo: false
 language: node_js
 node_js: "node"
+before_install:
+  - npm install -g http-server
 cache:
   directories:
     - "node_modules"
 script:
   - npm run lint
+  - http-server -a 127.0.0.1 -p 8080 &
+  - node unit_tests/navigation.js
+  - node unit_tests/brick_count.js

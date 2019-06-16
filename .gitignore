@@ -1,6 +1,8 @@
 docs/
 localtest/*
 node_modules/
+unit_tests/output/
+*.pdf
 SAS-InstantInsanity.sublime-*
 package-lock.json
 three.js

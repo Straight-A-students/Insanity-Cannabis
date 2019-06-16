@@ -1,6 +1,7 @@
 module.exports = {
   'env': {
     'browser': true,
+    'node': true,
     'es6': true
   },
   'parser': 'babel-eslint',
@@ -14,7 +15,10 @@ module.exports = {
   'extends': 'eslint:recommended',
   'rules': {
     'no-unused-vars': [
-      'warn'
+      'warn',
+      {
+        'argsIgnorePattern': '^_'
+      },
     ],
     'no-console': 'off',
   }
