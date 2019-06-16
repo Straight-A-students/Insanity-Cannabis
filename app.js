@@ -176,8 +176,8 @@ class App {
   }
 
   unlockRandomBrick() {
-    let list = app.materialManager.brickStyles.filter(n => 
-      ! app.unlockedBricks.has(n))
+    let list = this.materialManager.brickStyles.filter(n => 
+      ! this.unlockedBricks.has(n))
     if (list.length == 0) 
       return
 
