@@ -3,7 +3,7 @@ import { Displayer, Displayer4BrickStyle } from './displayer.js';
 import { SelectorBrick } from './brick.js';
 import { MaterialManager } from './material.js';
 import { AchievementManager, ACHIEVEMENTEVENT, ACHIEVEMENTTYPE } from './achievement.js';
-import { ZeroStepPassGame } from './achievement_list.js';
+import { ZeroStepPassGame, GiveupRecord } from './achievement_list.js';
 
 
 const STORAGEKEY = 'InsanityCannabisData';
@@ -140,6 +140,9 @@ class App {
       ]
     )
 
+    this.achievementManager = new AchievementManager();
+    this.achievementManager.addAchievement(new ZeroStepPassGame(this, 'zero-pass-game'));
+
     this.displayer = new Displayer(document.getElementById('render'));
     this.displayer4BrickStyle = new Displayer4BrickStyle(null);
     this.brickCount = 4;
@@ -161,9 +164,6 @@ class App {
     this.noticeIsBusy = false;
     this.gotoHome();
     this.loadData();
-
-    this.achievementManager = new AchievementManager();
-    this.achievementManager.addAchievement(new ZeroStepPassGame(this, 'zero-pass-game'));
 
     window.onbeforeunload = () => {
       this.storeData();
@@ -535,9 +535,10 @@ class App {
     document.getElementById("game").appendChild(gohome_btn);
     document.getElementById("game").appendChild(achievement_div);
 
-    this.achievementManager.list.forEach(achievement => {
+    for (var achievementId in this.achievementManager.list) {
+      let achievement = this.achievementManager.list[achievementId];
       this.insertAchievementElement(achievement.name, achievement.type, achievement.unlocked, achievement.ticket);
-    });
+    }
   }
 
   /**
@@ -810,6 +811,10 @@ class App {
       data.game = this.game.dumps();
     }
     data.unlockedAchievement = [...this.unlockedAchievement.values()];
+    data.achievementData = {};
+    for (var achievementId in this.achievementManager.list) {
+      data.achievementData[achievementId] = this.achievementManager.list[achievementId].dumps();
+    }
     localStorage.setItem(STORAGEKEY, JSON.stringify(data));
   }
 
@@ -844,6 +849,14 @@ class App {
     }
     if (data.unlockedAchievement !== undefined) {
       this.unlockedAchievement = new Set(data.unlockedAchievement);
+      data.unlockedAchievement.forEach(achievementId => {
+        this.achievementManager.list[achievementId].unlocked = true;
+      });
+    }
+    if (data.achievementData !== undefined) {
+      for (var achievementId in data.achievementData) {
+        this.achievementManager.list[achievementId].loads(data.achievementData[achievementId]);
+      }
     }
   }
 

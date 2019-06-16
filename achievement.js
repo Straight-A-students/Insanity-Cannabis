@@ -19,14 +19,14 @@ class AchievementManager {
     for (let event in ACHIEVEMENTEVENT) {
       this.listeners[ACHIEVEMENTEVENT[event]] = [];
     }
-    this.list = [];
+    this.list = {};
   }
 
   addAchievement(achievementEntry) {
     achievementEntry.event.forEach(event => {
       this.listeners[event].push(achievementEntry);
     });
-    this.list.push(achievementEntry);
+    this.list[achievementEntry.id] = achievementEntry;
   }
 
   triggerEvent(event, value) {
@@ -58,7 +58,8 @@ class AchievementEntry {
     this.achieveTitle = achieveTitle;
     this.achieveMessage = achieveMessage;
     this.ticket = ticket;
-    this.unlocked = app.unlockedAchievement.has(id);
+    this.unlocked = false;
+    this.data = {};
   }
 
   eventListener(type, value) {
@@ -73,6 +74,21 @@ class AchievementEntry {
       this.app.unlockRandomBrick();
     }
     this.app.storeData();
+  }
+
+  /**
+   * 匯出資料
+   */
+  dumps() {
+    return this.data;
+  }
+
+  /**
+   * 匯入資料
+   * @param {Object} data - 資料
+   */
+  loads(data) {
+    this.data = data;
   }
 }
 
