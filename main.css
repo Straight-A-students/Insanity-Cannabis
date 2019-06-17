@@ -209,6 +209,8 @@ button:focus{
 #achievement{
     margin: 0px auto;
     width: 60%;
+    height: 100%;
+    overflow: auto;
 }
 #achievement > div{
     margin: 10px 0;
@@ -218,6 +220,12 @@ button:focus{
     border: 2px black solid;
     border-radius:10px;
     padding: 2px;
+}
+.locked::before{
+    content: "[未解鎖] ";
+}
+.unlocked::before{
+    content: "[已解鎖] ";
 }
 #normal-area > .locked{
     background: rgb(255, 255, 255);
@@ -245,7 +253,7 @@ button:focus{
     padding: 2px;
 }
 #hide-area > .locked{
-    background: rgb(255, 255, 255);
+    display: none;
 }
 #hide-area > .unlocked{
     color: white;
@@ -331,6 +339,40 @@ button:focus{
     margin-left: 8px;
     white-space:nowrap;
     width: 50px;
+}
+#noticeWindow{
+    width: 300px;
+    height: 140px;
+    background: rgba(255, 255, 255, 0.9);
+    /* border: 2px black solid; */
+    border-radius:10px;
+    position: absolute;
+    top: -140px;
+    margin: 0px -140px;
+    padding: 10px;
+    left: 50%;
+    z-index: 999;
+    animation-name:slide;
+    animation-duration:3s;
+}
+@keyframes slide{
+    0%{
+        top: -140px;
+    }
+    40%, 60%{
+        top: -5px;
+    }
+    100%{
+        top: -140px;
+    }
+}
+#noticeWindow > div{
+    width: fit-content;
+    margin: 0 auto;
+}
+#nociceTitle{
+    font-size: 50px;
+    font-weight: bolder;
 }
 .ticket::after{
     content: "";

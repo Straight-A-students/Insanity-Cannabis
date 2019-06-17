@@ -2,6 +2,15 @@ import { Game } from './game.js';
 import { Displayer, Displayer4BrickStyle } from './displayer.js';
 import { SelectorBrick } from './brick.js';
 import { MaterialManager } from './material.js';
+import { AchievementManager, ACHIEVEMENTEVENT, ACHIEVEMENTTYPE } from './achievement.js';
+import {
+  ZeroStepPassGame,
+  GiveupRecord,
+  ContinuousSubmit,
+  PassGameRecord,
+  QuickPass,
+  FirstPass,
+} from './achievement_list.js';
 
 
 const STORAGEKEY = 'InsanityCannabisData';
@@ -14,7 +23,9 @@ class App {
    * 初始化App
    */
   constructor(bgm_player) {
-    this.materialManager = new MaterialManager([{
+    this.materialManager = new MaterialManager(
+      [
+        {
           type: MaterialManager.BACKGROUND,
           label: 'bg-sky',
         }, {
@@ -133,21 +144,50 @@ class App {
           label: 'nope',
           length: 1,
         },
-      ])
+      ]
+    )
+
+    this.achievementManager = new AchievementManager();
+    this.achievementManager.addAchievement(new ZeroStepPassGame(this, 'zero-pass-game'));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-1', '1', 1, false));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-2', '2', 10, true));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-3', '3', 15, true));
+    this.achievementManager.addAchievement(new GiveupRecord(this, 'giveup-4', '4', 20, true));
+    this.achievementManager.addAchievement(new ContinuousSubmit(this, 'continuous-submit', 5));
+    this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-1', '1', 3));
+    this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-2', '2', 10));
+    this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-3', '3', 15));
+    this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-4', '4', 20));
+    this.achievementManager.addAchievement(new PassGameRecord(this, 'pass-game-5', '5', 25));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-1', '1', 180));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-2', '2', 60));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-3', '3', 30));
+    this.achievementManager.addAchievement(new QuickPass(this, 'quick-pass-4', '4', 10));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-1', '1', 2));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-2', '2', 3));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-3', '3', 4));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-4', '4', 5));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-5', '5', 6));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-6', '6', 7));
+    this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-7', '7', 8));
+
     this.displayer = new Displayer(document.getElementById('render'));
     this.displayer4BrickStyle = new Displayer4BrickStyle(null);
     this.brickCount = 4;
     this.materialName = '08-octangle-full';
     this.backgroundMaterialName = 'bg-sky';
-    this.unlockedBricks = new Set([ '08-octangle-full' ])
+    this.unlockedBricks = new Set(['08-octangle-full'])
     this.game = null;
     this.volume = 75;
     this.bgm_player = bgm_player;
     this.inGame = false;
+    this.unlockedAchievement = new Set([]);
     this.brickStyles = this.materialManager.brickStyles.map(n =>
       new SelectorBrick(this, n))
     this.updateUnlockedBricks();
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
+    this.noticeStack = [];
+    this.noticeIsBusy = false;
     this.gotoHome();
     this.loadData();
     this.changeBackground();
@@ -159,8 +199,8 @@ class App {
 
   changeBackground(label) {
     this.displayer.scene.background =
-    this.displayer4BrickStyle.scene.background =
-    this.materialManager.get(label || this.backgroundMaterialName)
+      this.displayer4BrickStyle.scene.background =
+      this.materialManager.get(label || this.backgroundMaterialName)
   }
 
   displayBrickStyle(appElem) {
@@ -175,16 +215,17 @@ class App {
   }
 
   unlockRandomBrick() {
-    let list = this.materialManager.brickStyles.filter(n => 
-      ! this.unlockedBricks.has(n))
-    if (list.length == 0) 
+    let list = this.materialManager.brickStyles.filter(n =>
+      !this.unlockedBricks.has(n))
+    if (list.length == 0)
       return
 
     let label = list[Math.floor(Math.random() * list.length)]
     this.unlockedBricks.add(label)
     this.displayer4BrickStyle.selectorBricks.find(b =>
       b.label == label)
-    .enable()
+      .enable()
+    this.showAchievement('獲得方塊', '請到設定頁查看新的方塊');
   }
 
   updateUnlockedBricks() {
@@ -228,7 +269,6 @@ class App {
     start_btn.id = "start";
     setting_btn.id = "gotoSetting";
     achievement_btn.id = "gotoAchievement";
-    achievement_btn.style = "display: none"; // Temporary
     showaboutme_btn.id = "showaboutme";
 
     start_btn.innerText = "開始";
@@ -305,7 +345,10 @@ class App {
     tip_btn.onclick = () => { this.tip(); };
     continue_btn.onclick = () => { this.continue(); };
     restart_btn.onclick = () => { this.restart(); };
-    exit_btn.onclick = () => { this.exit(); };
+    exit_btn.onclick = () => {
+      this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.GIVEUP, null);
+      this.exit();
+    };
     volume_ipt.oninput = () => {
       this.setVolume(volume_ipt.value);
     };
@@ -438,66 +481,6 @@ class App {
     this.timeInt = setInterval(() => {
       time_num.innerText = Math.floor(this.game.getTime());
     }, 100);
-
-    let game_div = document.createElement('div');
-    game_div.style = 'position: absolute; top: 5%; left: 10%; background: rgba(128, 128, 128, 0.5); display: none;';
-
-    let brick_table = document.createElement('table');
-
-    let createBrick = (brickId, face) => {
-      let brick = document.createElement('div');
-      brick.id = 'brick' + brickId + face;
-      if (face == 'top' || face == 'bottom') {
-        brick.className = 'facetop';
-      } else {
-        brick.className = 'faceside';
-      }
-      return brick;
-    }
-
-    for (let brickId = 0; brickId < this.brickCount; brickId++) {
-      // top
-      let tr_top = document.createElement('tr');
-      let td_top = document.createElement('td');
-      td_top.colSpan = 4;
-      td_top.style = 'text-align: center;';
-      td_top.appendChild(createBrick(brickId, 'top'));
-      tr_top.appendChild(td_top);
-      brick_table.appendChild(tr_top);
-      // side
-      let tr_side = document.createElement('tr');
-      ['left', 'front', 'right', 'back'].forEach(face => {
-        let td_side = document.createElement('td');
-        td_side.appendChild(createBrick(brickId, face));
-        tr_side.appendChild(td_side);
-      });
-      brick_table.appendChild(tr_side);
-      // bottom
-      let tr_bottom = document.createElement('tr');
-      let td_bottom = document.createElement('td');
-      td_bottom.colSpan = 4;
-      td_bottom.style = 'text-align: center;';
-      td_bottom.appendChild(createBrick(brickId, 'bottom'));
-      tr_bottom.appendChild(td_bottom);
-      brick_table.appendChild(tr_bottom);
-    }
-
-    game_div.appendChild(brick_table);
-
-    this.draw = () => {
-      for (let bid = 0; bid < this.brickCount; bid++) {
-        ['front', 'back', 'left', 'right', 'top', 'bottom'].forEach(face => {
-          const el = document.getElementById('brick' + bid + face);
-          for (let bid2 = 1; bid2 <= this.brickCount; bid2++) {
-            el.classList.remove('face' + bid2);
-          }
-          el.classList.add('face' + this.game.bricks[bid].facePattern[face]);
-        });
-      }
-    }
-
-    document.getElementById("game").appendChild(game_div);
-    this.draw();
   }
 
   updateMove() {
@@ -588,37 +571,52 @@ class App {
     document.getElementById("game").appendChild(gohome_btn);
     document.getElementById("game").appendChild(achievement_div);
 
-    // TODO
+    for (var achievementId in this.achievementManager.list) {
+      let achievement = this.achievementManager.list[achievementId];
+      this.insertAchievementElement(achievement.name, achievement.achieveMessage, achievement.type, achievement.unlocked, achievement.ticket);
+    }
+  }
 
-    // Test Script
-    var normal_unlocked_div = document.createElement("div");
-    var normal_locked_div = document.createElement("div");
-    var special_unlocked_div = document.createElement("div");
-    var special_locked_div = document.createElement("div");
-    var hide_unlocked_div = document.createElement("div");
-    // var hide_locked_div = document.createElement("div");
+  /**
+   * 插入成就
+   * @param {string} context
+   * @param {number} type
+   * @param {flag} unlocked
+   * @param {flag} ticket
+   */
+  insertAchievementElement(achieveTitle, achieveMessage, type, unlocked, ticket) {
+    var new_achievement_element = document.createElement("div");
+    new_achievement_element.innerText = achieveTitle;
+    var title_unblocked = '';
+    var title_ticket = '';
 
-    normal_unlocked_div.innerText = "一般成就 已解鎖";
-    normal_locked_div.innerText = "一般成就 未解鎖";
-    special_unlocked_div.innerText = "特殊成就 已解鎖";
-    special_locked_div.innerText = "特殊成就 未解鎖";
-    hide_unlocked_div.innerText = "隱藏成就 已解鎖";
-    // hide_locked_div.innerText = "隱藏成就 未解鎖";
+    if (unlocked) {
+      new_achievement_element.classList.add("unlocked");
+      title_unblocked = '[已解鎖]';
+    } else {
+      new_achievement_element.classList.add("locked");
+      title_unblocked = '[未解鎖]';
+    }
 
-    normal_unlocked_div.classList.add("unlocked");
-    normal_unlocked_div.classList.add("ticket"); // Temp
-    normal_locked_div.classList.add("locked");
-    special_unlocked_div.classList.add("unlocked");
-    special_locked_div.classList.add("locked");
-    hide_unlocked_div.classList.add("unlocked");
-    // hide_locked_div.classList.add("locked");
+    if (ticket) {
+      new_achievement_element.classList.add("ticket");
+      title_ticket = '（有方塊獎勵）';
+    }
 
-    document.getElementById("normal-area").appendChild(normal_unlocked_div);
-    document.getElementById("normal-area").appendChild(normal_locked_div);
-    document.getElementById("special-area").appendChild(special_unlocked_div);
-    document.getElementById("special-area").appendChild(special_locked_div);
-    document.getElementById("hide-area").appendChild(hide_unlocked_div);
-    // document.getElementById("hide-area").appendChild(hide_locked_div);
+    switch (type) {
+      case ACHIEVEMENTTYPE.NORMAL:
+        new_achievement_element.title = title_unblocked + '[一般成就] ' + achieveMessage + title_ticket;
+        document.getElementById("normal-area").appendChild(new_achievement_element);
+        break;
+      case ACHIEVEMENTTYPE.SPECIAL:
+        new_achievement_element.title = title_unblocked + '[特殊成就] ' + achieveMessage + title_ticket;
+        document.getElementById("special-area").appendChild(new_achievement_element);
+        break;
+      case ACHIEVEMENTTYPE.HIDDEN:
+        new_achievement_element.title = title_unblocked + '[隱藏成就] ' + achieveMessage + title_ticket;
+        document.getElementById("hide-area").appendChild(new_achievement_element);
+        break;
+    }
   }
 
   /**
@@ -686,6 +684,7 @@ class App {
       this.game.start()
       this.displayer.mouseInfo.mouseDown = false // will be removed
     }
+    this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.CHECK_ANSWER, this.game.isResolve());
   }
 
   /**
@@ -698,6 +697,7 @@ class App {
     } else {
       this.game.showTip(tip[0]);
     }
+    this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.CHECK_ANSWER, this.game.isResolve());
   }
 
   // Game page: pause
@@ -742,6 +742,7 @@ class App {
    * 重新開始遊戲
    */
   restart() {
+    this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.RESTART_GAME, null);
     this.game.restart();
     document.getElementById('pauseBackgroundPage').style.display = 'none';
     document.getElementById('resultBackgroundPage').style.display = 'none';
@@ -858,6 +859,11 @@ class App {
     if (this.inGame) {
       data.game = this.game.dumps();
     }
+    data.unlockedAchievement = [...this.unlockedAchievement.values()];
+    data.achievementData = {};
+    for (var achievementId in this.achievementManager.list) {
+      data.achievementData[achievementId] = this.achievementManager.list[achievementId].dumps();
+    }
     data.unlockedBricks = [...this.unlockedBricks];
     localStorage.setItem(STORAGEKEY, JSON.stringify(data));
   }
@@ -894,10 +900,71 @@ class App {
         this.game.loads(data.game);
       }
     }
+    if (data.unlockedAchievement !== undefined) {
+      this.unlockedAchievement = new Set(data.unlockedAchievement);
+      data.unlockedAchievement.forEach(achievementId => {
+        if (this.achievementManager.list[achievementId] !== undefined) {
+          this.achievementManager.list[achievementId].unlocked = true;
+        }
+      });
+    }
+    if (data.achievementData !== undefined) {
+      for (var achievementId in data.achievementData) {
+        if (this.achievementManager.list[achievementId] !== undefined) {
+          this.achievementManager.list[achievementId].loads(data.achievementData[achievementId]);
+        }
+      }
+    }
     if (data.unlockedBricks !== undefined) {
       this.unlockedBricks = new Set(data.unlockedBricks);
       this.updateUnlockedBricks();
     }
+  }
+
+  /**
+   * 呼叫顯示成就
+   * @param {String} title
+   * @param {String} context
+   */
+  showAchievement(title, context) {
+    this.noticeStack.push({ title: title, context: context });
+    if (this.noticeIsBusy) {
+      return;
+    }
+    this.showAchievementWindow();
+  }
+
+  /**
+   * 顯示成就視窗
+   */
+  showAchievementWindow() {
+    this.noticeIsBusy = true;
+    var noticeWindow_div = document.createElement("div");
+    var nociceTitle_div = document.createElement("div");
+    var nociceContext_div = document.createElement("div");
+
+
+    noticeWindow_div.id = "noticeWindow";
+    nociceTitle_div.id = "nociceTitle";
+    nociceContext_div.id = "nociceContext";
+
+    var nowNotice = this.noticeStack.shift();
+    nociceTitle_div.innerText = nowNotice['title'];
+    nociceContext_div.innerText = nowNotice['context'];
+
+    noticeWindow_div.addEventListener('animationend', () => {
+      if (this.noticeStack.length > 0) {
+        this.showAchievementWindow();
+      } else {
+        this.noticeIsBusy = false;
+      }
+      noticeWindow_div.remove();
+    });
+
+    noticeWindow_div.appendChild(nociceTitle_div);
+    noticeWindow_div.appendChild(nociceContext_div);
+
+    document.body.appendChild(noticeWindow_div);
   }
 }
 
