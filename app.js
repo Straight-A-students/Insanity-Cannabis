@@ -174,7 +174,7 @@ class App {
     this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-6', '6', 7));
     this.achievementManager.addAchievement(new FirstPass(this, 'first-pass-7', '7', 8));
 
-    this.displayer = new Displayer(document.getElementById('render'));
+    this.displayer = new Displayer(document.getElementById('render'), this);
     this.displayer4BrickStyle = new Displayer4BrickStyle(null);
     this.brickCount = 4;
     this.materialName = '08-octangle-full';

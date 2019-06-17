@@ -8,7 +8,8 @@ class Displayer {
    * 初始化
    * @param {*} appElem
    */
-  constructor(appElem) {
+  constructor(appElem, app) {
+    this.app = app
     this.renderer = new THREE.WebGLRenderer({ antialias: true })
     this.scene = new THREE.Scene()
     this.camera = new THREE.PerspectiveCamera( 50, 0, 0.1, 1000 )
@@ -74,7 +75,7 @@ class Displayer {
     window.addEventListener('wheel', e => this.wheelEvent(e))
     this.eventList = [
       () => this.renderer.render(this.scene, this.camera),
-      () => this.bugegg(),
+      // () => this.bugegg(),
     ]
     let exe = e => e()
     setInterval(() =>
@@ -94,7 +95,9 @@ class Displayer {
   }
 
   findBug () {
-    alert('Congratulation, ur a good bug finder !!1')
+    if (this.app.inGame) {
+      this.app.game.timeCounter -= 150
+    }
   }
 
   /**
@@ -269,7 +272,6 @@ class Displayer {
     let [ brick, normal ] = this.calcMouseRay(e)
     mouseInfo.interObject = brick
     if (brick) {
-      console.log(brick)
       let { x, y, z } = normal
       brick.mouseDownEvent(e.clientX, e.clientY, x, y, z)
     }
