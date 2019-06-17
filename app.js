@@ -803,7 +803,7 @@ class App {
    */
   increaseBrickCount() {
     if (this.brickCount >= 8) {
-      alert('上限為8個方塊');
+      this.showAchievement('提示', '上限為8個方塊');
       return;
     }
     this.brickCount++;
@@ -816,7 +816,7 @@ class App {
    */
   decreaseBrickCount() {
     if (this.brickCount <= 2) {
-      alert('下限為2個方塊');
+      this.showAchievement('提示', '下限為2個方塊');
       return;
     }
     this.brickCount--;
