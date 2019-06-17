@@ -75,7 +75,7 @@ class Displayer {
     window.addEventListener('wheel', e => this.wheelEvent(e))
     this.eventList = [
       () => this.renderer.render(this.scene, this.camera),
-      // () => this.bugegg(),
+      () => this.bugegg(),
     ]
     let exe = e => e()
     setInterval(() =>
