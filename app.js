@@ -186,11 +186,11 @@ class App {
       new SelectorBrick(this, n))
     this.updateUnlockedBricks();
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
-    this.changeBackground()
     this.noticeStack = [];
     this.noticeIsBusy = false;
     this.gotoHome();
     this.loadData();
+    this.changeBackground();
 
     window.onbeforeunload = () => {
       this.storeData();
@@ -300,6 +300,7 @@ class App {
     var submit_btn = document.createElement("button");
     this.submit_btn = submit_btn;
     var tip_btn = document.createElement("button");
+    this.tip_btn = tip_btn;
     // var canvas_div = document.createElement("div");
     var timemoveblock_div = document.createElement("div");
     this.timemoveblock_div = timemoveblock_div;
@@ -719,6 +720,7 @@ class App {
     this.pause_btn.style.display = 'none';
     this.timemoveblock_div.style.display = 'none';
     this.submit_btn.style.display = 'none';
+    this.tip_btn.style.display = 'none';
   }
 
   /**
@@ -749,6 +751,7 @@ class App {
     this.pause_btn.style.display = 'block';
     this.timemoveblock_div.style.display = 'block';
     this.submit_btn.style.display = 'block';
+    this.tip_btn.style.display = 'block';
     this.timeInt = setInterval(() => {
       this.time_num.innerText = this.game.getTimeFormatted();
     }, 100);
@@ -766,6 +769,7 @@ class App {
     this.pause_btn.style.display = 'block';
     this.timemoveblock_div.style.display = 'block';
     this.submit_btn.style.display = 'block';
+    this.tip_btn.style.display = 'block';
     this.timeInt = setInterval(() => {
       this.time_num.innerText = Math.floor(this.game.getTime());
     }, 100);
@@ -849,6 +853,7 @@ class App {
     let data = {};
     data.brickCount = this.brickCount;
     data.materialName = this.materialName;
+    data.backgroundMaterialName = this.backgroundMaterialName;
     data.volume = this.volume;
     data.inGame = this.inGame;
     if (this.inGame) {
@@ -881,6 +886,9 @@ class App {
     }
     if (data.materialName !== undefined) {
       this.materialName = data.materialName;
+    }
+    if (data.backgroundMaterialName !== undefined) {
+      this.backgroundMaterialName = data.backgroundMaterialName;
     }
     if (data.volume !== undefined) {
       this.volume = data.volume;
