@@ -697,7 +697,6 @@ class App {
     } else {
       this.game.showTip(tip[0]);
     }
-    this.achievementManager.triggerEvent(ACHIEVEMENTEVENT.CHECK_ANSWER, this.game.isResolve());
   }
 
   // Game page: pause
