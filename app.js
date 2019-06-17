@@ -495,6 +495,7 @@ class App {
     // this.displayer.display(Displayer.SELECTING)
     this.displayer4BrickStyle.display(Displayer.SELECTING)
     var setting_div = document.createElement("div");
+    var settingBackground_div = document.createElement("div");
     var brickNumSetting_div = document.createElement("div");
     var brickStyleSetting_div = document.createElement("div");
     var brickNumTXT_div = document.createElement("div");
@@ -511,6 +512,7 @@ class App {
     gohome_btn.onclick = () => { this.gotoHome() };
 
     setting_div.id = "setting";
+    settingBackground_div.id = "settingBackground";
     brickNumSetting_div.id = "brickNumSetting";
     brickStyleSetting_div.id = "brickStyleSetting";
     brickNumTXT_div.id = "brickNumTXT";
@@ -539,9 +541,10 @@ class App {
     brickStyleSetting_div.appendChild(brickShow_div);
     setting_div.appendChild(brickNumSetting_div);
     setting_div.appendChild(brickStyleSetting_div);
+    settingBackground_div.appendChild(setting_div);
+    settingBackground_div.appendChild(gohome_btn);
 
-    document.getElementById("game").appendChild(gohome_btn);
-    document.getElementById("game").appendChild(setting_div);
+    document.getElementById("game").appendChild(settingBackground_div);
     this.displayBrickStyle(brickShow_div);
   }
 
