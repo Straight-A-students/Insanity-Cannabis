@@ -287,11 +287,22 @@ button:focus{
 }
 #loadingContent{
     text-align: center;
-    height: 30px;
+    height: 400px;
     width: 360px;
     position: relative;
-    top: calc(50% - 15px);
+    top: calc(50% - 200px);
     left: calc(50% - 180px);
+}
+#gif1 {
+    vertical-align: top;
+    height: 33px;
+}
+#gif2 {
+    height: 270px;
+}
+#gifBlock {
+    display: inline-block;
+    height: 100px;
 }
 
 #volumeSetting{
