@@ -148,9 +148,9 @@ class App {
       new SelectorBrick(this, n))
     this.updateUnlockedBricks();
     this.displayer4BrickStyle.setBrickSelectors(this.brickStyles)
-    this.changeBackground()
     this.gotoHome();
     this.loadData();
+    this.changeBackground();
 
     window.onbeforeunload = () => {
       this.storeData();
@@ -852,6 +852,7 @@ class App {
     let data = {};
     data.brickCount = this.brickCount;
     data.materialName = this.materialName;
+    data.backgroundMaterialName = this.backgroundMaterialName;
     data.volume = this.volume;
     data.inGame = this.inGame;
     if (this.inGame) {
@@ -879,6 +880,9 @@ class App {
     }
     if (data.materialName !== undefined) {
       this.materialName = data.materialName;
+    }
+    if (data.backgroundMaterialName !== undefined) {
+      this.backgroundMaterialName = data.backgroundMaterialName;
     }
     if (data.volume !== undefined) {
       this.volume = data.volume;
