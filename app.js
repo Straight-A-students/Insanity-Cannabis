@@ -52,6 +52,9 @@ class App {
           sameWall: true,
           label: 'bg-04-3',
         }, {
+          type: MaterialManager.BACKGROUND,
+          label: 'bg-sky-05',
+        }, {
           type: MaterialManager.BRICKSTYLE,
           label: 'dice',
           length: 8,
