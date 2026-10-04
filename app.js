@@ -22,7 +22,7 @@ class App {
   /**
    * 初始化App
    */
-  constructor(bgm_player) {
+  constructor(bgm_player = null) {
     this.materialManager = new MaterialManager(
       [
         {
@@ -402,9 +402,9 @@ class App {
     resultPage_home_btn.id = "resultPage_home";
     bgmCredit_div.id = "bgmCredit";
     bgmCreditLink.id = "bgmCreditLink";
-    bgmCreditLink.href = `https://youtu.be/${this.bgm_player.getVideoData().video_id}`;
+    bgmCreditLink.href = `https://youtu.be/${this.getBgmVideoData().video_id}`;
     bgmCreditLink.target = "_blank";
-    bgmCreditLink.innerText = this.bgm_player.getVideoData().title;
+    bgmCreditLink.innerText = this.getBgmVideoData().title;
 
     time_lb.classList.add("lb");
     time_num.classList.add("num");
@@ -643,7 +643,7 @@ class App {
     context_div.innerHTML = `團隊名稱：<a href="https://github.com/Straight-A-students/" target="_blank">Straight A Students</a><br>
     成員：XMAX, xiplus, MAHADADA, oldA5, Orcinus<br>
     <br>
-    背景音樂：<a href="https://youtu.be/${this.bgm_player.getVideoData().video_id}" target="_blank">${this.bgm_player.getVideoData().title}</a><br>
+    背景音樂：<a href="https://youtu.be/${this.getBgmVideoData().video_id}" target="_blank">${this.getBgmVideoData().title}</a><br>
     3D graph renderer powered by <a href="https://threejs.org/" target="_blank">three.js</a><br>
     `;
 
@@ -796,8 +796,30 @@ class App {
   setVolume(value) {
     document.getElementById("output").innerHTML = value;
     this.volume = value;
-    this.bgm_player.setVolume(value);
+    if (this.bgm_player) {
+      this.bgm_player.setVolume(value);
+    }
     this.storeData();
+  }
+
+  /**
+   * 設定背景音樂播放器（YouTube 播放器可能比 App 晚就緒，或根本無法載入）
+   * @param {YT.Player} bgm_player
+   */
+  setBgmPlayer(bgm_player) {
+    this.bgm_player = bgm_player;
+    bgm_player.setVolume(this.volume);
+    bgm_player.playVideo();
+  }
+
+  /**
+   * 取得背景音樂資訊，播放器尚未就緒時回傳空值
+   */
+  getBgmVideoData() {
+    if (!this.bgm_player) {
+      return { video_id: '', title: '' };
+    }
+    return this.bgm_player.getVideoData();
   }
 
 

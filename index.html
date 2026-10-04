@@ -15,9 +15,9 @@
 
 	<!-- https://developers.google.com/youtube/iframe_api_reference -->
 	<div id="bgm_player"></div>
-	<script src="https://www.youtube.com/iframe_api"></script>
 	<script>
 		var player;
+		var playerReady = false;
 		function onYouTubeIframeAPIReady() {
 			player = new YT.Player('bgm_player', {
 				events: {
@@ -29,14 +29,42 @@
 				videoId: 'arq7-XXEM5o'
 			});
 		}
+		// App 不等 YouTube 播放器，播放器就緒後再接上；兩者完成順序不一定
 		function onPlayerReady(event) {
-			window.app = new App(player);
-			event.target.setVolume(app.volume);
-			event.target.playVideo();
+			playerReady = true;
+			if (window.app) {
+				window.app.setBgmPlayer(player);
+			}
+		}
+		function startApp() {
+			window.app = new App();
+			if (playerReady) {
+				window.app.setBgmPlayer(player);
+			}
 		}
 		window.onfocus = function() {
-			window.app.bgm_player.playVideo();
+			if (window.app && window.app.bgm_player) {
+				window.app.bgm_player.playVideo();
+			}
 		}
+		// 瀏覽器會擋下未經使用者互動的有聲自動播放，所以在第一次互動時再播放
+		var GESTURE_EVENTS = ['pointerdown', 'keydown', 'touchstart'];
+		function playBgmOnGesture() {
+			if (!window.app || !window.app.bgm_player) {
+				return;
+			}
+			window.app.bgm_player.playVideo();
+			GESTURE_EVENTS.forEach(type =>
+				window.removeEventListener(type, playBgmOnGesture, true));
+		}
+		GESTURE_EVENTS.forEach(type =>
+			window.addEventListener(type, playBgmOnGesture, true));
+	</script>
+	<!-- async 載入，YouTube 慢或被擋時不會卡住頁面 -->
+	<script src="https://www.youtube.com/iframe_api" async></script>
+	<!-- module 依文件順序執行，這裡會在 app.js 之後執行 -->
+	<script type="module">
+		startApp();
 	</script>
 
 	<div id="loading">
