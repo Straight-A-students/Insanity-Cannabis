@@ -141,7 +141,8 @@ button:focus{
 #pausePage{
     margin: 0px auto;
     width: 500px;
-    height: 285px;
+    min-height: 285px;
+    padding-bottom: 10px;
     position: relative;
     transform:translateY(50%);
     border: 2px black solid;
