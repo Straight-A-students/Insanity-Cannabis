@@ -664,6 +664,11 @@ class App {
     }
 
     this.game.pause();
+    // 建立暫停頁時音樂可能還沒開始播放，標題為空，所以每次暫停時更新
+    let bgmCreditLink = document.getElementById('bgmCreditLink');
+    let bgmVideoData = this.getBgmVideoData();
+    bgmCreditLink.href = `https://youtu.be/${bgmVideoData.video_id}`;
+    bgmCreditLink.innerText = bgmVideoData.title;
     document.getElementById('pauseBackgroundPage').style.display = 'block';
   }
 
