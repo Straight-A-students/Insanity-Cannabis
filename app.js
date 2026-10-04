@@ -356,7 +356,7 @@ class App {
       this.setVolume(volume_ipt.value);
     };
     resultBackgroundPage_div.onclick = (e) => {
-      if (e.path.some(e => e.id == 'resultPage')) {
+      if (e.composedPath().some(e => e.id == 'resultPage')) {
         return;
       }
       this.showGameEnd();

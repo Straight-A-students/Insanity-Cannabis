@@ -256,7 +256,7 @@ class Displayer {
    */
   mouseDownEvent(e) {
     let { mouseInfo } = this
-    if (e.path.some(e => SKIP_ELEM_IDS.has(e.id)) || mouseInfo.mouseDown)
+    if (e.composedPath().some(e => SKIP_ELEM_IDS.has(e.id)) || mouseInfo.mouseDown)
       return
 
     if (e.type == 'touchstart') {
@@ -415,7 +415,7 @@ class Displayer4BrickStyle extends Displayer {
   }
 
   mouseDownEvent(e) {
-    if (e.path[0] != this.domElement) 
+    if (e.composedPath()[0] != this.domElement) 
       return
     else 
       super.mouseDownEvent(e)
